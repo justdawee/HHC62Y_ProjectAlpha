@@ -182,11 +182,9 @@ module Client =
     let Main () =
         let state = Var.Create (Storage.load())
 
-        // Persist + redraw charts on every state change
+        // Persist on every state change (charts update via Doc.BindView below)
         state.View |> View.Sink (fun p ->
             Storage.save p
-            Charts.update p
-            Charts.updateSparkline p
         )
 
         // Derived views
@@ -292,6 +290,10 @@ module Client =
                                         Attr.Create "viewBox" "0 0 200 80"
                                         Attr.Create "xmlns"   "http://www.w3.org/2000/svg"
                                     ] []
+                                    Doc.BindView (fun p ->
+                                        Charts.updateSparkline p
+                                        Doc.Empty
+                                    ) state.View
                                 ]
                             ]
 
@@ -337,6 +339,11 @@ module Client =
                                             div [attr.``class`` "lbl"] [text "Total"]
                                             div [attr.``class`` "val"] [textView totalView]
                                         ]
+                                        // Render donut after SVG is in DOM
+                                        Doc.BindView (fun p ->
+                                            Charts.update p
+                                            Doc.Empty
+                                        ) state.View
                                     ]
                                     legendDoc
                                 ]
@@ -347,11 +354,3 @@ module Client =
             ]
 
         Doc.RunById "main" ui
-
-        // Both charts need a short delay for the DOM to commit
-        async {
-            do! Async.Sleep 80
-            Charts.update state.Value
-            Charts.updateSparkline state.Value
-        }
-        |> Async.StartImmediate
