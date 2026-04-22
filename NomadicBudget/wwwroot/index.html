@@ -5,43 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>NomadicBudget &#8211; Digital Nomad Cost of Living Calculator</title>
 
-    <!-- Bulma CSS -->
+    <!-- Google Fonts: Syne (display) + DM Mono (code/numbers) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css" />
+          href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Mono:wght@400;500&display=swap" />
 
-    <!-- Bulma Slider extension -->
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/bulma-slider@2.0.5/dist/css/bulma-slider.min.css" />
-
-    <!-- FontAwesome 6 -->
+    <!-- FontAwesome 6 (category icons) -->
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
           crossorigin="anonymous" />
 
-    <!-- Chart.js 4 – must load BEFORE WebSharper scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+    <!-- Midnight Atlas design system -->
+    <link rel="stylesheet" href="nb.css" />
 
     <!-- WebSharper generated CSS -->
     <link rel="stylesheet" href="Scripts/NomadicBudget.css" />
-
-    <style>
-        html, body {
-            background-color: #0a0a1a;
-            min-height: 100vh;
-        }
-        .box {
-            background-color: #16213e !important;
-            border: 1px solid #2a2a4a;
-        }
-        .hero.is-dark { background-color: #0f3460; }
-        .slider::-webkit-slider-thumb { cursor: grab; }
-        .slider:active::-webkit-slider-thumb { cursor: grabbing; }
-        hr { background-color: #2a2a4a; height: 1px; }
-        select option { background-color: #16213e; color: #e0e0e0; }
-
-        /* Hide unloaded WebSharper templates */
-        [ws-template], [ws-children-template] { display: none; }
-    </style>
 
     <script type="text/javascript" src="Scripts/NomadicBudget.head.js"></script>
 </head>

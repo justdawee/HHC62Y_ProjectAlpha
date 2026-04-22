@@ -19,39 +19,33 @@ module Client =
         if n >= 0.0 then sprintf "$%.0f" n
         else sprintf "-$%.0f" (abs n)
 
-    // ── Reusable slider field ───────────────────────────────────────────
+    // ── Reusable expense slider field ───────────────────────────────────
 
     let private sliderField
-            (lbl    : string)
-            (icon   : string)
-            (minV   : float)
-            (maxV   : float)
-            (stepV  : float)
-            (get    : BudgetProfile -> float<usd>)
-            (setF   : float<usd> -> BudgetProfile -> BudgetProfile)
-            (state  : Var<BudgetProfile>) =
+            (lbl   : string)
+            (icon  : string)
+            (minV  : float)
+            (maxV  : float)
+            (stepV : float)
+            (get   : BudgetProfile -> float<usd>)
+            (setF  : float<usd> -> BudgetProfile -> BudgetProfile)
+            (state : Var<BudgetProfile>) =
         let viewVal = state.View |> View.Map (fun p -> float (get p))
-        div [attr.``class`` "field mb-4"] [
-            div [attr.``class`` "level is-mobile mb-1"] [
-                div [attr.``class`` "level-left"] [
-                    label [attr.``class`` "label has-text-light is-small mb-0"] [
-                        span [attr.``class`` "icon-text"] [
-                            span [attr.``class`` "icon is-small"] [
-                                i [attr.``class`` (sprintf "fas %s" icon)] []
-                            ]
-                            span [] [text lbl]
-                        ]
+        div [attr.``class`` "nb-field"] [
+            div [attr.``class`` "nb-field-header"] [
+                label [attr.``class`` "nb-label"] [
+                    span [attr.``class`` "nb-label-icon"] [
+                        i [attr.``class`` (sprintf "fas %s" icon)] []
                     ]
+                    text lbl
                 ]
-                div [attr.``class`` "level-right"] [
-                    span [attr.``class`` "tag is-info"] [
-                        textView (viewVal |> View.Map (sprintf "$%.0f"))
-                    ]
+                span [attr.``class`` "nb-badge nb-badge--cyan"] [
+                    textView (viewVal |> View.Map (sprintf "$%.0f"))
                 ]
             ]
             input [
                 attr.``type``  "range"
-                attr.``class`` "slider is-fullwidth is-info"
+                attr.``class`` "nb-range"
                 attr.min       (string minV)
                 attr.max       (string maxV)
                 attr.step      (string stepV)
@@ -67,25 +61,21 @@ module Client =
 
     let private incomeField (state: Var<BudgetProfile>) =
         let viewVal = state.View |> View.Map (fun p -> float p.MonthlyIncome)
-        div [attr.``class`` "field mb-5"] [
-            div [attr.``class`` "level is-mobile mb-1"] [
-                div [attr.``class`` "level-left"] [
-                    label [attr.``class`` "label has-text-light mb-0"] [
-                        span [attr.``class`` "icon-text"] [
-                            span [attr.``class`` "icon"] [ i [attr.``class`` "fas fa-wallet"] [] ]
-                            span [] [text "Monthly Income"]
-                        ]
+        div [attr.``class`` "nb-field"] [
+            div [attr.``class`` "nb-field-header"] [
+                label [attr.``class`` "nb-label nb-income-label"] [
+                    span [attr.``class`` "nb-label-icon"] [
+                        i [attr.``class`` "fas fa-wallet"] []
                     ]
+                    text "Monthly Income"
                 ]
-                div [attr.``class`` "level-right"] [
-                    span [attr.``class`` "tag is-success is-medium"] [
-                        textView (viewVal |> View.Map (sprintf "$%.0f"))
-                    ]
+                span [attr.``class`` "nb-badge nb-badge--green"] [
+                    textView (viewVal |> View.Map (sprintf "$%.0f"))
                 ]
             ]
             input [
                 attr.``type``  "range"
-                attr.``class`` "slider is-fullwidth is-success is-medium"
+                attr.``class`` "nb-range nb-range--income"
                 attr.min "500" ; attr.max "20000" ; attr.step "100"
                 Attr.Dynamic "value" (viewVal |> View.Map string)
                 on.input (fun el _ ->
@@ -99,25 +89,21 @@ module Client =
 
     let private taxRateField (state: Var<BudgetProfile>) =
         let viewPct = state.View |> View.Map (fun p -> p.TaxRate * 100.0)
-        div [attr.``class`` "field mb-4"] [
-            div [attr.``class`` "level is-mobile mb-1"] [
-                div [attr.``class`` "level-left"] [
-                    label [attr.``class`` "label has-text-light is-small mb-0"] [
-                        span [attr.``class`` "icon-text"] [
-                            span [attr.``class`` "icon is-small"] [ i [attr.``class`` "fas fa-percent"] [] ]
-                            span [] [text "Tax Rate"]
-                        ]
+        div [attr.``class`` "nb-field"] [
+            div [attr.``class`` "nb-field-header"] [
+                label [attr.``class`` "nb-label"] [
+                    span [attr.``class`` "nb-label-icon"] [
+                        i [attr.``class`` "fas fa-percent"] []
                     ]
+                    text "Tax Rate"
                 ]
-                div [attr.``class`` "level-right"] [
-                    span [attr.``class`` "tag is-warning"] [
-                        textView (viewPct |> View.Map (sprintf "%.0f%%"))
-                    ]
+                span [attr.``class`` "nb-badge nb-badge--warn"] [
+                    textView (viewPct |> View.Map (sprintf "%.0f%%"))
                 ]
             ]
             input [
                 attr.``type``  "range"
-                attr.``class`` "slider is-fullwidth is-warning"
+                attr.``class`` "nb-range nb-range--tax"
                 attr.min "0" ; attr.max "60" ; attr.step "1"
                 Attr.Dynamic "value" (viewPct |> View.Map string)
                 on.input (fun el _ ->
@@ -136,79 +122,68 @@ module Client =
             | Progressive    -> "1"
             | SocialSecurity -> "2"
         )
-        div [attr.``class`` "field mb-3"] [
-            label [attr.``class`` "label has-text-light is-small"] [
-                span [attr.``class`` "icon-text"] [
-                    span [attr.``class`` "icon is-small"] [ i [attr.``class`` "fas fa-building-columns"] [] ]
-                    span [] [text "Tax Mode"]
+        div [attr.``class`` "nb-field"] [
+            div [attr.``class`` "nb-field-header"] [
+                label [attr.``class`` "nb-label"] [
+                    span [attr.``class`` "nb-label-icon"] [
+                        i [attr.``class`` "fas fa-building-columns"] []
+                    ]
+                    text "Tax Mode"
                 ]
             ]
-            div [attr.``class`` "control"] [
-                div [attr.``class`` "select is-dark is-fullwidth is-small"] [
-                    select [
-                        Attr.Dynamic "value" modeView
-                        on.change (fun el _ ->
-                            // Cast to HTMLInputElement — both share the .value JS property
-                            let mode =
-                                match (As<HTMLInputElement>(el)).Value with
-                                | "1" -> Progressive
-                                | "2" -> SocialSecurity
-                                | _   -> FixedRate
-                            state.Update(fun p -> { p with TaxMode = mode })
-                        )
-                    ] [
-                        option [attr.value "0"] [text "Fixed Rate"]
-                        option [attr.value "1"] [text "Progressive (brackets)"]
-                        option [attr.value "2"] [text "Self-Employment / Social Security (15.3%)"]
-                    ]
-                ]
-            ]
-        ]
-
-    // ── Stat card ───────────────────────────────────────────────────────
-
-    let private statCard (lbl: string) (icon: string) (tagCls: string) (valueView: View<string>) =
-        div [attr.``class`` "box mb-3"] [
-            div [attr.``class`` "level is-mobile"] [
-                div [attr.``class`` "level-left"] [
-                    div [] [
-                        p [attr.``class`` "heading has-text-grey-light"] [text lbl]
-                        p [attr.``class`` (sprintf "title is-4 %s" tagCls)] [ textView valueView ]
-                    ]
-                ]
-                div [attr.``class`` "level-right"] [
-                    span [attr.``class`` (sprintf "icon is-large %s" tagCls)] [
-                        i [attr.``class`` (sprintf "fas fa-2x %s" icon)] []
-                    ]
+            div [attr.``class`` "nb-select-wrap"] [
+                select [
+                    attr.``class`` "nb-select"
+                    Attr.Dynamic "value" modeView
+                    on.change (fun el _ ->
+                        let mode =
+                            match (As<HTMLInputElement>(el)).Value with
+                            | "1" -> Progressive
+                            | "2" -> SocialSecurity
+                            | _   -> FixedRate
+                        state.Update(fun p -> { p with TaxMode = mode })
+                    )
+                ] [
+                    option [attr.value "0"] [text "Fixed Rate"]
+                    option [attr.value "1"] [text "Progressive (brackets)"]
+                    option [attr.value "2"] [text "Self-Employment / SS (15.3%)"]
                 ]
             ]
         ]
 
-    // ── Savings rate progress bar ───────────────────────────────────────
+    // ── Savings rate bar ────────────────────────────────────────────────
 
     let private savingsBar (state: Var<BudgetProfile>) =
-        let rateView  = state.View |> View.Map savingsRate
-        let pctView   = rateView |> View.Map (fun r -> sprintf "%.1f%%" (max 0.0 r))
-        let colorView = rateView |> View.Map (fun r ->
-            if r >= 30.0 then "is-success"
-            elif r >= 5.0 then "is-warning"
-            else "is-danger"
+        let rateView = state.View |> View.Map savingsRate
+        let pctView  = rateView |> View.Map (fun r -> sprintf "%.1f%%" (max 0.0 r))
+        let fillSt   = rateView |> View.Map (fun r -> sprintf "width:%.1f%%" (max 0.0 (min 100.0 r)))
+        let fillCls  = rateView |> View.Map (fun r ->
+            if r >= 30.0 then "nb-savings__fill nb-savings__fill--success"
+            elif r >= 5.0 then "nb-savings__fill nb-savings__fill--warning"
+            else "nb-savings__fill nb-savings__fill--danger"
         )
-        let valView = rateView |> View.Map (fun r -> string (int (max 0.0 (min 100.0 r))))
-        div [attr.``class`` "box mb-3"] [
-            div [attr.``class`` "level is-mobile mb-2"] [
-                div [attr.``class`` "level-left"] [
-                    p [attr.``class`` "heading has-text-grey-light"] [text "Savings Rate"]
-                ]
-                div [attr.``class`` "level-right"] [
-                    span [attr.``class`` "tag is-dark"] [ textView pctView ]
-                ]
+        div [attr.``class`` "nb-savings"] [
+            div [attr.``class`` "nb-savings__header"] [
+                span [attr.``class`` "nb-savings__label"] [text "Savings Rate"]
+                span [attr.``class`` "nb-savings__pct"] [textView pctView]
             ]
-            progress [
-                Attr.Dynamic "class" (colorView |> View.Map (sprintf "progress %s"))
-                Attr.Dynamic "value" valView
-                attr.max "100"
+            div [attr.``class`` "nb-savings__track"] [
+                div [
+                    Attr.Dynamic "class" fillCls
+                    Attr.Dynamic "style" fillSt
+                ] []
+            ]
+        ]
+
+    // ── Chart legend item ───────────────────────────────────────────────
+
+    let private legendItem (cat: ExpenseCategory) : Doc =
+        div [attr.``class`` "nb-legend-item"] [
+            div [
+                attr.``class`` "nb-legend-dot"
+                attr.style (sprintf "background:%s" (categoryColor cat))
             ] []
+            span [] [text (categoryName cat)]
         ]
 
     // ── Entry point ─────────────────────────────────────────────────────
@@ -217,96 +192,121 @@ module Client =
     let Main () =
         let state = Var.Create (Storage.load())
 
-        // Persist + update chart on every state change
+        // Persist + redraw chart on every state change
         state.View |> View.Sink (fun p ->
             Storage.save p
             Charts.update p
         )
 
-        // Derived views for right panel
-        let netView  = state.View |> View.Map (netSavings >> fmt)
-        let burnView = state.View |> View.Map (burnRate   >> fmt)
-        let taxView  = state.View |> View.Map (fun p ->
+        // Derived views
+        let netView      = state.View |> View.Map (netSavings >> fmt)
+        let burnView     = state.View |> View.Map (burnRate   >> fmt)
+        let taxView      = state.View |> View.Map (fun p ->
             fmt (calculateTax p.MonthlyIncome p.TaxRate p.TaxMode)
         )
-        let netColorView = state.View |> View.Map (fun p ->
-            if float (netSavings p) >= 0.0 then "has-text-success" else "has-text-danger"
+        let netClassView = state.View |> View.Map (fun p ->
+            if float (netSavings p) >= 0.0 then "nb-kpi-hero__value"
+            else "nb-kpi-hero__value nb-kpi-hero__value--neg"
         )
 
         let ui =
-            div [attr.``class`` "container is-fluid mt-4 px-4"] [
+            div [attr.``class`` "nb-shell"] [
+                div [attr.``class`` "nb-grain"] []
+                div [attr.``class`` "nb-container"] [
 
-                // ── Header hero ──────────────────────────────────────
-                div [attr.``class`` "hero is-dark is-small mb-5"] [
-                    div [attr.``class`` "hero-body py-4"] [
-                        p [attr.``class`` "title"] [
-                            span [attr.``class`` "icon-text"] [
-                                span [attr.``class`` "icon"] [ i [attr.``class`` "fas fa-earth-americas"] [] ]
-                                span [] [text " NomadicBudget"]
-                            ]
+                    // ── Top bar ──────────────────────────────────────
+                    div [attr.``class`` "nb-topbar"] [
+                        p [attr.``class`` "nb-brand"] [
+                            text "Nomadic"
+                            strong [] [text "Budget"]
                         ]
-                        p [attr.``class`` "subtitle is-6 has-text-grey-light"] [
-                            text "Digital Nomad \u00b7 Cost of Living Calculator"
+                        span [attr.``class`` "nb-tag"] [
+                            text "Digital Nomad Calculator"
                         ]
                     ]
-                ]
 
-                // ── Two-column layout ────────────────────────────────
-                div [attr.``class`` "columns is-variable is-4"] [
+                    // ── Two-column grid ──────────────────────────────
+                    div [attr.``class`` "nb-grid"] [
 
-                    // Left: inputs
-                    div [attr.``class`` "column is-5"] [
-                        div [attr.``class`` "box"] [
-                            p [attr.``class`` "title is-5 has-text-light mb-4"] [
-                                span [attr.``class`` "icon-text"] [
-                                    span [attr.``class`` "icon"] [ i [attr.``class`` "fas fa-sliders"] [] ]
-                                    span [] [text " Budget Inputs"]
-                                ]
-                            ]
+                        // Left column: Budget Inputs
+                        div [attr.``class`` "nb-card nb-card--accent"] [
+                            div [attr.``class`` "nb-card-title"] [text "Budget Inputs"]
+
                             incomeField state
-                            hr [] []
-                            sliderField "Housing"    "fa-house"       0.0 5000.0 50.0 (fun p -> p.Housing)    (fun v p -> { p with Housing    = v }) state
-                            sliderField "Food"       "fa-utensils"    0.0 2000.0 25.0 (fun p -> p.Food)       (fun v p -> { p with Food       = v }) state
-                            sliderField "Transport"  "fa-car"         0.0 1000.0 25.0 (fun p -> p.Transport)  (fun v p -> { p with Transport  = v }) state
-                            sliderField "Healthcare" "fa-heart-pulse" 0.0 1000.0 25.0 (fun p -> p.Healthcare) (fun v p -> { p with Healthcare = v }) state
-                            sliderField "Fun"        "fa-gamepad"     0.0 2000.0 25.0 (fun p -> p.Fun)        (fun v p -> { p with Fun        = v }) state
-                            sliderField "Other"      "fa-ellipsis"    0.0 1000.0 25.0 (fun p -> p.Other)      (fun v p -> { p with Other      = v }) state
-                            hr [] []
+                            hr [attr.``class`` "nb-divider"] []
+
+                            sliderField "Housing"    "fa-house"       0.0 5000.0 50.0
+                                (fun p -> p.Housing)    (fun v p -> { p with Housing    = v }) state
+                            sliderField "Food"       "fa-utensils"    0.0 2000.0 25.0
+                                (fun p -> p.Food)       (fun v p -> { p with Food       = v }) state
+                            sliderField "Transport"  "fa-car"         0.0 1000.0 25.0
+                                (fun p -> p.Transport)  (fun v p -> { p with Transport  = v }) state
+                            sliderField "Healthcare" "fa-heart-pulse" 0.0 1000.0 25.0
+                                (fun p -> p.Healthcare) (fun v p -> { p with Healthcare = v }) state
+                            sliderField "Fun"        "fa-gamepad"     0.0 2000.0 25.0
+                                (fun p -> p.Fun)        (fun v p -> { p with Fun        = v }) state
+                            sliderField "Other"      "fa-ellipsis"    0.0 1000.0 25.0
+                                (fun p -> p.Other)      (fun v p -> { p with Other      = v }) state
+
+                            hr [attr.``class`` "nb-divider"] []
+
                             taxRateField state
                             taxModeSelect state
                         ]
-                    ]
 
-                    // Right: stats + chart
-                    div [attr.``class`` "column"] [
-                        // Net savings – color flips when negative
-                        div [attr.``class`` "box mb-3"] [
-                            div [attr.``class`` "level is-mobile"] [
-                                div [attr.``class`` "level-left"] [
+                        // Right column: Stats + Chart
+                        div [attr.``class`` "nb-stagger"] [
+
+                            // Net Monthly Savings — hero KPI
+                            div [attr.``class`` "nb-card"] [
+                                div [attr.``class`` "nb-kpi-hero"] [
                                     div [] [
-                                        p [attr.``class`` "heading has-text-grey-light"] [text "Net Monthly Savings"]
-                                        p [Attr.Dynamic "class" (netColorView |> View.Map (sprintf "title is-3 %s"))] [
+                                        p [attr.``class`` "nb-kpi-hero__eyebrow"] [
+                                            text "Net Monthly Savings"
+                                        ]
+                                        p [Attr.Dynamic "class" netClassView] [
                                             textView netView
                                         ]
                                     ]
+                                    div [attr.``class`` "nb-kpi-hero__icon"] [
+                                        i [attr.``class`` "fas fa-piggy-bank"] []
+                                    ]
                                 ]
-                                div [attr.``class`` "level-right"] [
-                                    span [attr.``class`` "icon is-large has-text-success"] [
-                                        i [attr.``class`` "fas fa-2x fa-piggy-bank"] []
+                                savingsBar state
+                            ]
+
+                            // Burn Rate + Tax row
+                            div [attr.``class`` "nb-kpi-row"] [
+                                div [attr.``class`` "nb-kpi"] [
+                                    p [attr.``class`` "nb-kpi__label"] [text "Monthly Burn"]
+                                    p [attr.``class`` "nb-kpi__value nb-kpi__value--coral"] [
+                                        textView burnView
+                                    ]
+                                ]
+                                div [attr.``class`` "nb-kpi"] [
+                                    p [attr.``class`` "nb-kpi__label"] [text "Tax Estimated"]
+                                    p [attr.``class`` "nb-kpi__value nb-kpi__value--amber"] [
+                                        textView taxView
                                     ]
                                 ]
                             ]
-                        ]
 
-                        statCard "Monthly Burn Rate" "fa-fire"             "has-text-danger"  burnView
-                        statCard "Monthly Tax"        "fa-building-columns" "has-text-warning" taxView
-                        savingsBar state
-
-                        // Doughnut chart
-                        div [attr.``class`` "box"] [
-                            p [attr.``class`` "title is-6 has-text-light mb-3"] [text "Expense Breakdown"]
-                            div [attr.style "height:280px; position:relative;"] [
-                                canvas [attr.id "expense-chart"] []
+                            // Expense Breakdown doughnut
+                            div [attr.``class`` "nb-card"] [
+                                div [attr.``class`` "nb-card-title"] [
+                                    text "Expense Breakdown"
+                                ]
+                                div [attr.``class`` "nb-chart-wrap"] [
+                                    Doc.Element "svg" [
+                                        attr.id "nb-donut"
+                                        attr.``class`` "nb-chart-svg"
+                                        Attr.Create "viewBox" "0 0 200 200"
+                                        Attr.Create "xmlns" "http://www.w3.org/2000/svg"
+                                    ] []
+                                    div [attr.``class`` "nb-legend"] (
+                                        allCategories |> List.map legendItem
+                                    )
+                                ]
                             ]
                         ]
                     ]
@@ -315,9 +315,9 @@ module Client =
 
         Doc.RunById "main" ui
 
-        // Init Chart.js after DOM is committed
+        // Draw chart after DOM is ready
         async {
             do! Async.Sleep 80
-            Charts.init "expense-chart" state.Value
+            Charts.update state.Value
         }
         |> Async.StartImmediate

@@ -95,12 +95,12 @@ module Domain =
 
     let categoryColor (cat: ExpenseCategory) =
         match cat with
-        | Housing    -> "#FF6384"
-        | Food       -> "#36A2EB"
-        | Transport  -> "#FFCE56"
-        | Healthcare -> "#4BC0C0"
-        | Fun        -> "#9966FF"
-        | Other      -> "#FF9F40"
+        | Housing    -> "#F5A623"  // amber
+        | Food       -> "#3DD6F5"  // cyan
+        | Transport  -> "#00D4AA"  // green
+        | Healthcare -> "#FF4D6D"  // coral
+        | Fun        -> "#B58CFF"  // purple
+        | Other      -> "#5A6478"  // muted slate
 
     let allCategories = [ Housing; Food; Transport; Healthcare; Fun; Other ]
 
