@@ -1,36 +1,29 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600" width="1200" height="600">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600" width="1200" height="600" preserveAspectRatio="xMidYMid slice">
   <defs>
-    <pattern id="dot-grid" x="0" y="0" width="24" height="24" patternUnits="userSpaceOnUse">
-      <circle cx="2" cy="2" r="1.4" fill="#3DD6F5" opacity="0.55"/>
+    <pattern id="dot" x="0" y="0" width="24" height="24" patternUnits="userSpaceOnUse">
+      <circle cx="1.2" cy="1.2" r="1.2" fill="#3DD6F5" opacity="0.28"></circle>
     </pattern>
+    <radialGradient id="glow1" cx="20%" cy="30%" r="40%">
+      <stop offset="0%" stop-color="#151938" stop-opacity="0.8"></stop>
+      <stop offset="100%" stop-color="#151938" stop-opacity="0"></stop>
+    </radialGradient>
+    <radialGradient id="glow2" cx="80%" cy="70%" r="40%">
+      <stop offset="0%" stop-color="#0A1530" stop-opacity="0.9"></stop>
+      <stop offset="100%" stop-color="#0A1530" stop-opacity="0"></stop>
+    </radialGradient>
   </defs>
+  <rect width="1200" height="600" fill="#080B14"></rect>
+  <rect width="1200" height="600" fill="url(#glow1)"></rect>
+  <rect width="1200" height="600" fill="url(#glow2)"></rect>
+  <rect width="1200" height="600" fill="url(#dot)" opacity="0.12"></rect>
 
-  <!-- Dot field -->
-  <rect width="1200" height="600" fill="url(#dot-grid)"/>
-
-  <!-- Globe: outer circle -->
-  <ellipse cx="600" cy="300" rx="268" ry="268"
-           fill="none" stroke="#3DD6F5" stroke-width="1.2"
-           stroke-dasharray="5 9" opacity="0.55"/>
-
-  <!-- Globe: latitude bands -->
-  <ellipse cx="600" cy="300" rx="268" ry="107"
-           fill="none" stroke="#3DD6F5" stroke-width="1"
-           stroke-dasharray="4 8" opacity="0.45"/>
-  <ellipse cx="600" cy="300" rx="268" ry="53"
-           fill="none" stroke="#3DD6F5" stroke-width="0.8"
-           stroke-dasharray="3 8" opacity="0.35"/>
-
-  <!-- Globe: meridians -->
-  <ellipse cx="600" cy="300" rx="107" ry="268"
-           fill="none" stroke="#3DD6F5" stroke-width="1"
-           stroke-dasharray="4 8" opacity="0.45"/>
-  <ellipse cx="600" cy="300" rx="53" ry="268"
-           fill="none" stroke="#3DD6F5" stroke-width="0.8"
-           stroke-dasharray="3 8" opacity="0.35"/>
-
-  <!-- Equator -->
-  <line x1="332" y1="300" x2="868" y2="300"
-        stroke="#3DD6F5" stroke-width="0.8"
-        stroke-dasharray="3 8" opacity="0.3"/>
+  <g fill="none" stroke="#3DD6F5" stroke-width="0.6" opacity="0.15" stroke-dasharray="2 6">
+    <ellipse cx="600" cy="300" rx="500" ry="240"></ellipse>
+    <ellipse cx="600" cy="300" rx="400" ry="240"></ellipse>
+    <ellipse cx="600" cy="300" rx="300" ry="240"></ellipse>
+    <ellipse cx="600" cy="300" rx="200" ry="240"></ellipse>
+    <ellipse cx="600" cy="300" rx="100" ry="240"></ellipse>
+    <ellipse cx="600" cy="300" rx="500" ry="120"></ellipse>
+    <ellipse cx="600" cy="300" rx="500" ry="60"></ellipse>
+  </g>
 </svg>
