@@ -1,28 +1,52 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>NomadicBudget</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" type="text/css" href="Scripts/NomadicBudget.css" />
+    <title>NomadicBudget &#8211; Digital Nomad Cost of Living Calculator</title>
+
+    <!-- Bulma CSS -->
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css" />
+
+    <!-- Bulma Slider extension -->
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bulma-slider@2.0.5/dist/css/bulma-slider.min.css" />
+
+    <!-- FontAwesome 6 -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+          crossorigin="anonymous" />
+
+    <!-- Chart.js 4 – must load BEFORE WebSharper scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+
+    <!-- WebSharper generated CSS -->
+    <link rel="stylesheet" href="Scripts/NomadicBudget.css" />
+
     <style>
-        /* Don't show the not-yet-loaded templates */
+        html, body {
+            background-color: #0a0a1a;
+            min-height: 100vh;
+        }
+        .box {
+            background-color: #16213e !important;
+            border: 1px solid #2a2a4a;
+        }
+        .hero.is-dark { background-color: #0f3460; }
+        .slider::-webkit-slider-thumb { cursor: grab; }
+        .slider:active::-webkit-slider-thumb { cursor: grabbing; }
+        hr { background-color: #2a2a4a; height: 1px; }
+        select option { background-color: #16213e; color: #e0e0e0; }
+
+        /* Hide unloaded WebSharper templates */
         [ws-template], [ws-children-template] { display: none; }
     </style>
+
     <script type="text/javascript" src="Scripts/NomadicBudget.head.js"></script>
 </head>
 <body>
-    <h1>My list of unique people</h1>
-    <div id="main" ws-children-template="Main">
-        <ul ws-hole="ListContainer">
-            <li ws-template="ListItem">${Name}</li>
-        </ul>
-        <div>
-            <input ws-var="Name" placeholder="Name" />
-            <button ws-onclick="Add">Add</button>
-            <div>You are about to add: ${Name}</div>
-        </div>
-    </div>
+    <div id="main"></div>
     <script type="module" src="Scripts/NomadicBudget.min.js"></script>
 </body>
 </html>
