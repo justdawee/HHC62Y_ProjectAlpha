@@ -28,10 +28,10 @@ jobs:
       # This produces bundled JS in wwwroot/Scripts/
       - name: Build Release
         run: dotnet build --configuration Release
-        working-directory: NomadicBudget/NomadicBudget
+        working-directory: NomadicBudget
 
       - name: Deploy to gh-pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           branch: gh-pages
-          folder: NomadicBudget/NomadicBudget/wwwroot
+          folder: NomadicBudget/wwwroot
