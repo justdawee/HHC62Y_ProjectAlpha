@@ -8,148 +8,151 @@ open Domain
 module Charts =
 
     // ── Doughnut ────────────────────────────────────────────────────────────
-    // Clears #nb-donut and draws arc-path segments + centre label.
-    // Safe to call before the element exists (guard returns early).
+    // Stroke-dasharray technique on <circle> elements.
+    // r = (200 - strokeWidth) / 2 = (200 - 22) / 2 = 89
+    // circ = 2 * PI * 89 ≈ 559.20
+    // Each segment: strokeDasharray = "segLen rest", strokeDashoffset = -acc*circ
+    // rotate(-90 100 100) starts drawing from the top.
 
     [<Inline """
-    (function(data, colors) {
+    (function(data, colors, total) {
         var el = document.getElementById('nb-donut');
         if (!el) return;
         while (el.firstChild) { el.removeChild(el.firstChild); }
 
-        var total = 0;
-        for (var k = 0; k < data.length; k++) { total += data[k]; }
+        var NS  = 'http://www.w3.org/2000/svg';
+        var cx  = 100, cy = 100, r = 89, sw = 22;
+        var circ = 2 * Math.PI * r;
+
+        // Base (track) circle
+        var base = document.createElementNS(NS, 'circle');
+        base.setAttribute('cx', cx);
+        base.setAttribute('cy', cy);
+        base.setAttribute('r', r);
+        base.setAttribute('fill', 'none');
+        base.setAttribute('stroke', '#141B2D');
+        base.setAttribute('stroke-width', sw);
+        el.appendChild(base);
+
         if (total <= 0) return;
 
-        var NS  = 'http://www.w3.org/2000/svg';
-        var cx  = 100, cy = 100, R = 85, r = 52;
-        var gap = 0.012; // small gap between slices (radians)
-        var angle = 0;
-
+        var acc = 0;
         for (var i = 0; i < data.length; i++) {
             if (data[i] <= 0) { continue; }
             var frac = data[i] / total;
-            var end  = angle + frac * 2 * Math.PI - gap;
-            var a1   = angle - Math.PI / 2;
-            var a2   = end   - Math.PI / 2;
-
-            var x1  = cx + R * Math.cos(a1), y1  = cy + R * Math.sin(a1);
-            var x2  = cx + R * Math.cos(a2), y2  = cy + R * Math.sin(a2);
-            var ix1 = cx + r * Math.cos(a1), iy1 = cy + r * Math.sin(a1);
-            var ix2 = cx + r * Math.cos(a2), iy2 = cy + r * Math.sin(a2);
-            var lg  = frac > 0.5 ? 1 : 0;
-
-            var p = document.createElementNS(NS, 'path');
-            p.setAttribute('d',
-                'M '  + x1.toFixed(2) + ' ' + y1.toFixed(2) +
-                ' A ' + R + ' ' + R + ' 0 ' + lg + ' 1 ' + x2.toFixed(2) + ' ' + y2.toFixed(2) +
-                ' L ' + ix2.toFixed(2) + ' ' + iy2.toFixed(2) +
-                ' A ' + r + ' ' + r + ' 0 ' + lg + ' 0 ' + ix1.toFixed(2) + ' ' + iy1.toFixed(2) +
-                ' Z');
-            p.setAttribute('fill', colors[i]);
-            p.setAttribute('opacity', '0.93');
-            el.appendChild(p);
-            angle = end + gap;
+            var len  = frac * circ;
+            var seg  = document.createElementNS(NS, 'circle');
+            seg.setAttribute('cx', cx);
+            seg.setAttribute('cy', cy);
+            seg.setAttribute('r', r);
+            seg.setAttribute('fill', 'none');
+            seg.setAttribute('stroke', colors[i]);
+            seg.setAttribute('stroke-width', sw);
+            seg.setAttribute('stroke-dasharray', len.toFixed(3) + ' ' + (circ - len).toFixed(3));
+            seg.setAttribute('stroke-dashoffset', (-acc * circ).toFixed(3));
+            seg.setAttribute('transform', 'rotate(-90 ' + cx + ' ' + cy + ')');
+            el.appendChild(seg);
+            acc += frac;
         }
 
-        // Centre labels
+        // Centre: "TOTAL" label
         var t1 = document.createElementNS(NS, 'text');
-        t1.setAttribute('x', '100'); t1.setAttribute('y', '93');
+        t1.setAttribute('x', '100'); t1.setAttribute('y', '94');
         t1.setAttribute('text-anchor', 'middle');
-        t1.setAttribute('fill', '#7A8DAF');
+        t1.setAttribute('fill', '#AEB6C6');
         t1.setAttribute('font-family', 'DM Mono, monospace');
         t1.setAttribute('font-size', '9');
-        t1.setAttribute('letter-spacing', '1');
+        t1.setAttribute('letter-spacing', '2');
         t1.textContent = 'TOTAL';
         el.appendChild(t1);
 
+        // Centre: dollar amount
         var t2 = document.createElementNS(NS, 'text');
-        t2.setAttribute('x', '100'); t2.setAttribute('y', '113');
+        t2.setAttribute('x', '100'); t2.setAttribute('y', '116');
         t2.setAttribute('text-anchor', 'middle');
-        t2.setAttribute('fill', '#EEF3FF');
+        t2.setAttribute('fill', '#E8ECF4');
         t2.setAttribute('font-family', 'Syne, sans-serif');
-        t2.setAttribute('font-weight', '800');
-        t2.setAttribute('font-size', '18');
+        t2.setAttribute('font-weight', '700');
+        t2.setAttribute('font-size', '20');
         t2.textContent = '$' + Math.round(total).toLocaleString();
         el.appendChild(t2);
-    })($data, $colors)
+    })($data, $colors, $total)
     """>]
-    let private renderDonut (data: float[]) (colors: string[]) : unit = ()
+    let private renderDonut (data: float[]) (colors: string[]) (total: float) : unit = ()
 
     let update (profile: BudgetProfile) : unit =
         let data   = allCategories |> List.map (fun cat -> float (categoryValue profile cat)) |> Array.ofList
         let colors = allCategories |> List.map categoryColor |> Array.ofList
-        renderDonut data colors
+        let total  = float (totalExpenses profile)
+        renderDonut data colors total
 
     // ── Sparkline ───────────────────────────────────────────────────────────
-    // Draws a smooth bezier area chart into #nb-sparkline.
-    // Uses the current savings rate (0-100) to shape an upward-trending curve.
+    // Formula from Dashboard.jsx:
+    //   ratio = net / income  (clamped to -0.6 … 0.8)
+    //   21 points, x ∈ [0,1], y = 0.55 - r*0.45*(0.4+0.6*x) + sin(x*6+r*2)*0.05
+    //   SVG viewBox "0 0 200 80"
+    //   color: cyan when ratio ≥ 0, coral otherwise
 
     [<Inline """
-    (function(rate) {
+    (function(ratio) {
         var el = document.getElementById('nb-sparkline');
         if (!el) return;
         while (el.firstChild) { el.removeChild(el.firstChild); }
 
-        var w = 120, h = 44;
-        var r = Math.max(0, Math.min(100, rate));
-
-        // 8 points: smoothstep from near-zero to r/100 of chart height
-        var n = 8;
+        var r = Math.max(-0.6, Math.min(0.8, ratio));
         var pts = [];
-        for (var i = 0; i < n; i++) {
-            var t    = i / (n - 1);
-            var ease = t * t * (3 - 2 * t);          // smoothstep
-            var wave = Math.sin(t * Math.PI * 1.5) * 0.08 * (1 - ease);
-            var yFrac = ease * (r / 100) + wave;
-            pts.push({ x: t * w, y: h - yFrac * h * 0.82 - h * 0.06 });
+        for (var i = 0; i <= 20; i++) {
+            var x    = i / 20;
+            var y    = 0.55 - r * 0.45 * (0.4 + 0.6 * x) + Math.sin(x * 6 + r * 2) * 0.05;
+            pts.push([x * 200, y * 80]);
         }
 
-        // Smooth bezier
-        var d = 'M ' + pts[0].x.toFixed(1) + ' ' + pts[0].y.toFixed(1);
+        var lineColor = r >= 0 ? '#3DD6F5' : '#FF4D6D';
+
+        // Smooth cubic bezier path
+        var d = 'M ' + pts[0][0].toFixed(2) + ',' + pts[0][1].toFixed(2);
         for (var i = 1; i < pts.length; i++) {
-            var cp1x = pts[i-1].x + (pts[i].x - pts[i-1].x) * 0.5;
-            var cp2x = pts[i].x   - (pts[i].x - pts[i-1].x) * 0.5;
-            d += ' C ' + cp1x.toFixed(1) + ' ' + pts[i-1].y.toFixed(1) +
-                 ' ' + cp2x.toFixed(1) + ' ' + pts[i].y.toFixed(1) +
-                 ' ' + pts[i].x.toFixed(1) + ' ' + pts[i].y.toFixed(1);
+            var cpx = (pts[i-1][0] + pts[i][0]) / 2;
+            d += ' C ' + cpx.toFixed(2) + ',' + pts[i-1][1].toFixed(2) +
+                 ' '  + cpx.toFixed(2) + ',' + pts[i][1].toFixed(2) +
+                 ' '  + pts[i][0].toFixed(2) + ',' + pts[i][1].toFixed(2);
         }
 
-        var fill = d + ' L ' + w + ' ' + h + ' L 0 ' + h + ' Z';
-        var lineColor = r >= 30 ? '#00D4AA' : r >= 5 ? '#3DD6F5' : '#FF4D6D';
-
-        var NS = 'http://www.w3.org/2000/svg';
-
-        // Gradient fill
+        var NS   = 'http://www.w3.org/2000/svg';
         var defs = document.createElementNS(NS, 'defs');
         var grad = document.createElementNS(NS, 'linearGradient');
-        grad.setAttribute('id', 'spk-grad');
-        grad.setAttribute('x1', '0%'); grad.setAttribute('y1', '0%');
-        grad.setAttribute('x2', '0%'); grad.setAttribute('y2', '100%');
+        grad.setAttribute('id', 'spk-g');
+        grad.setAttribute('x1', '0'); grad.setAttribute('y1', '0');
+        grad.setAttribute('x2', '0'); grad.setAttribute('y2', '1');
         var s1 = document.createElementNS(NS, 'stop');
-        s1.setAttribute('offset', '0%');   s1.setAttribute('stop-color', lineColor); s1.setAttribute('stop-opacity', '0.3');
+        s1.setAttribute('offset', '0%');   s1.setAttribute('stop-color', lineColor); s1.setAttribute('stop-opacity', '0.35');
         var s2 = document.createElementNS(NS, 'stop');
-        s2.setAttribute('offset', '100%'); s2.setAttribute('stop-color', lineColor); s2.setAttribute('stop-opacity', '0.01');
+        s2.setAttribute('offset', '100%'); s2.setAttribute('stop-color', lineColor); s2.setAttribute('stop-opacity', '0.02');
         grad.appendChild(s1); grad.appendChild(s2);
         defs.appendChild(grad);
         el.appendChild(defs);
 
+        // Filled area
         var area = document.createElementNS(NS, 'path');
-        area.setAttribute('d', fill);
-        area.setAttribute('fill', 'url(#spk-grad)');
+        area.setAttribute('d', d + ' L200,80 L0,80 Z');
+        area.setAttribute('fill', 'url(#spk-g)');
         el.appendChild(area);
 
+        // Stroke line
         var line = document.createElementNS(NS, 'path');
         line.setAttribute('d', d);
         line.setAttribute('fill', 'none');
         line.setAttribute('stroke', lineColor);
-        line.setAttribute('stroke-width', '1.8');
+        line.setAttribute('stroke-width', '2');
         line.setAttribute('stroke-linecap', 'round');
         line.setAttribute('stroke-linejoin', 'round');
         el.appendChild(line);
-    })($rate)
+    })($ratio)
     """>]
-    let private renderSparkline (rate: float) : unit = ()
+    let private renderSparkline (ratio: float) : unit = ()
 
     let updateSparkline (profile: BudgetProfile) : unit =
-        renderSparkline (max 0.0 (min 100.0 (savingsRate profile)))
+        let ratio =
+            if profile.MonthlyIncome = 0.0<usd> then 0.0
+            else float (netSavings profile) / float profile.MonthlyIncome
+        renderSparkline ratio

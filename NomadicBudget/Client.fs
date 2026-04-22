@@ -29,14 +29,14 @@ module Client =
             (state : Var<BudgetProfile>) =
         let viewVal = state.View |> View.Map (fun p -> float (get p))
         div [attr.``class`` "nb-field"] [
-            div [attr.``class`` "nb-field-header"] [
-                label [attr.``class`` "nb-label"] [
-                    span [attr.``class`` "nb-label-icon"] [
+            div [attr.``class`` "nb-field__head"] [
+                label [attr.``class`` "nb-field__label"] [
+                    span [attr.``class`` "nb-field__icon"] [
                         i [attr.``class`` (sprintf "fas %s" icon)] []
                     ]
                     text lbl
                 ]
-                span [attr.``class`` "nb-badge nb-badge--cyan"] [
+                span [attr.``class`` "nb-field__value"] [
                     textView (viewVal |> View.Map (sprintf "$%.0f"))
                 ]
             ]
@@ -58,15 +58,15 @@ module Client =
 
     let private incomeField (state: Var<BudgetProfile>) =
         let viewVal = state.View |> View.Map (fun p -> float p.MonthlyIncome)
-        div [attr.``class`` "nb-field"] [
-            div [attr.``class`` "nb-field-header"] [
-                label [attr.``class`` "nb-label nb-income-label"] [
-                    span [attr.``class`` "nb-label-icon"] [
+        div [attr.``class`` "nb-field nb-field--income"] [
+            div [attr.``class`` "nb-field__head"] [
+                label [attr.``class`` "nb-field__label"] [
+                    span [attr.``class`` "nb-field__icon"] [
                         i [attr.``class`` "fas fa-wallet"] []
                     ]
                     text "Monthly Income"
                 ]
-                span [attr.``class`` "nb-badge nb-badge--green"] [
+                span [attr.``class`` "nb-field__value"] [
                     textView (viewVal |> View.Map (sprintf "$%.0f"))
                 ]
             ]
@@ -86,15 +86,15 @@ module Client =
 
     let private taxRateField (state: Var<BudgetProfile>) =
         let viewPct = state.View |> View.Map (fun p -> p.TaxRate * 100.0)
-        div [attr.``class`` "nb-field"] [
-            div [attr.``class`` "nb-field-header"] [
-                label [attr.``class`` "nb-label"] [
-                    span [attr.``class`` "nb-label-icon"] [
+        div [attr.``class`` "nb-field nb-field--tax"] [
+            div [attr.``class`` "nb-field__head"] [
+                label [attr.``class`` "nb-field__label"] [
+                    span [attr.``class`` "nb-field__icon"] [
                         i [attr.``class`` "fas fa-percent"] []
                     ]
                     text "Tax Rate"
                 ]
-                span [attr.``class`` "nb-badge nb-badge--warn"] [
+                span [attr.``class`` "nb-field__value"] [
                     textView (viewPct |> View.Map (sprintf "%.0f%%"))
                 ]
             ]
@@ -120,9 +120,9 @@ module Client =
             | SocialSecurity -> "2"
         )
         div [attr.``class`` "nb-field"] [
-            div [attr.``class`` "nb-field-header"] [
-                label [attr.``class`` "nb-label"] [
-                    span [attr.``class`` "nb-label-icon"] [
+            div [attr.``class`` "nb-field__head"] [
+                label [attr.``class`` "nb-field__label"] [
+                    span [attr.``class`` "nb-field__icon"] [
                         i [attr.``class`` "fas fa-building-columns"] []
                     ]
                     text "Tax Mode"
@@ -148,15 +148,15 @@ module Client =
             ]
         ]
 
-    // ── Rainbow savings rate bar ─────────────────────────────────────────────
-    // Track is always the full gradient; a white marker slides to the current %.
-    // Zone labels: DANGER <5% · STABLE >5% · THRIVING >30%
+    // ── Savings rate bar ─────────────────────────────────────────────────────
+    // Track shows 3-zone background (danger / stable / thriving).
+    // A gradient fill expands from left to savings %.
 
     let private savingsBar (state: Var<BudgetProfile>) =
-        let rateView   = state.View |> View.Map savingsRate
-        let pctText    = rateView |> View.Map (fun r -> sprintf "%.1f%%" (max 0.0 r))
-        let markerLeft = rateView |> View.Map (fun r -> sprintf "left:%.2f%%" (max 0.5 (min 99.5 r)))
-        let pctCls     = rateView |> View.Map (fun r ->
+        let rateView     = state.View |> View.Map savingsRate
+        let pctText      = rateView |> View.Map (fun r -> sprintf "%.1f%%" (max 0.0 r))
+        let fillStyle    = rateView |> View.Map (fun r -> sprintf "width:%.1f%%" (max 0.0 (min 100.0 r)))
+        let pctCls       = rateView |> View.Map (fun r ->
             if r >= 30.0 then "nb-savings__pct nb-savings__pct--thriving"
             elif r >= 5.0 then "nb-savings__pct nb-savings__pct--stable"
             else "nb-savings__pct nb-savings__pct--danger"
@@ -168,8 +168,8 @@ module Client =
             ]
             div [attr.``class`` "nb-savings__track"] [
                 div [
-                    attr.``class`` "nb-savings__marker"
-                    Attr.Dynamic "style" markerLeft
+                    attr.``class`` "nb-savings__fill"
+                    Attr.Dynamic "style" fillStyle
                 ] []
             ]
             div [attr.``class`` "nb-savings__zones"] [
@@ -199,51 +199,96 @@ module Client =
             fmt (calculateTax p.MonthlyIncome p.TaxRate p.TaxMode)
         )
         let netClassView = state.View |> View.Map (fun p ->
-            if float (netSavings p) >= 0.0 then "nb-kpi-hero__value"
+            if float (netSavings p) >= 0.0
+            then "nb-kpi-hero__value"
             else "nb-kpi-hero__value nb-kpi-hero__value--neg"
         )
 
-        // Reactive legend: dot · name · $value for each category
+        // Reactive legend: 2-col grid, each row: name-left / value-right
         let legendDoc =
             Doc.BindView (fun profile ->
-                div [attr.``class`` "nb-legend"] (
+                div [attr.``class`` "nb-chart-legend"] (
                     allCategories |> List.map (fun cat ->
-                        div [attr.``class`` "nb-legend-item"] [
-                            div [
-                                attr.``class`` "nb-legend-dot"
-                                attr.style (sprintf "background:%s" (categoryColor cat))
-                            ] []
-                            span [attr.``class`` "nb-legend-name"] [text (categoryName cat)]
-                            span [attr.``class`` "nb-legend-val"]  [text (fmt (categoryValue profile cat))]
+                        div [attr.``class`` "nb-leg-row"] [
+                            div [attr.``class`` "name"] [
+                                div [
+                                    attr.``class`` "nb-leg-dot"
+                                    attr.style (sprintf "background:%s" (categoryColor cat))
+                                ] []
+                                span [] [text (categoryName cat)]
+                            ]
+                            span [attr.``class`` "v"] [text (fmt (categoryValue profile cat))]
                         ]
                     )
                 )
             ) state.View
 
         let ui =
-            div [attr.``class`` "nb-shell"] [
+            div [attr.``class`` "nb-shell nb"] [
                 div [attr.``class`` "nb-grain"] []
                 div [attr.``class`` "nb-container"] [
 
                     // ── Top bar ──────────────────────────────────────────
                     div [attr.``class`` "nb-topbar"] [
-                        // Globe icon + brand name (div avoids p-tag overflow clip)
                         div [attr.``class`` "nb-brand"] [
-                            i [attr.``class`` "fas fa-earth-americas nb-brand-icon"] []
-                            text "Nomadic"
-                            strong [] [text "Budget"]
+                            // Logo mark inline SVG (amber gradient globe)
+                            Doc.Element "svg" [
+                                attr.``class`` "nb-brand-icon"
+                                Attr.Create "viewBox" "0 0 32 32"
+                                Attr.Create "xmlns"   "http://www.w3.org/2000/svg"
+                                Attr.Create "fill"    "none"
+                            ] [
+                                Doc.Element "defs" [] [
+                                    Doc.Element "linearGradient" [
+                                        Attr.Create "id"  "lg"
+                                        Attr.Create "x1"  "0%"
+                                        Attr.Create "y1"  "0%"
+                                        Attr.Create "x2"  "100%"
+                                        Attr.Create "y2"  "100%"
+                                    ] [
+                                        Doc.Element "stop" [Attr.Create "offset" "0%";   Attr.Create "stop-color" "#F5A623"] []
+                                        Doc.Element "stop" [Attr.Create "offset" "100%"; Attr.Create "stop-color" "#FF7A38"] []
+                                    ]
+                                ]
+                                Doc.Element "circle" [
+                                    Attr.Create "cx"           "16"
+                                    Attr.Create "cy"           "16"
+                                    Attr.Create "r"            "14"
+                                    Attr.Create "stroke"       "url(#lg)"
+                                    Attr.Create "stroke-width" "2"
+                                ] []
+                                Doc.Element "ellipse" [
+                                    Attr.Create "cx"             "16"
+                                    Attr.Create "cy"             "16"
+                                    Attr.Create "rx"             "6"
+                                    Attr.Create "ry"             "14"
+                                    Attr.Create "stroke"         "url(#lg)"
+                                    Attr.Create "stroke-width"   "1.5"
+                                    Attr.Create "stroke-dasharray" "3 4"
+                                ] []
+                                Doc.Element "line" [
+                                    Attr.Create "x1"           "2"
+                                    Attr.Create "y1"           "16"
+                                    Attr.Create "x2"           "30"
+                                    Attr.Create "y2"           "16"
+                                    Attr.Create "stroke"       "url(#lg)"
+                                    Attr.Create "stroke-width" "1.5"
+                                    Attr.Create "stroke-dasharray" "3 4"
+                                ] []
+                            ]
+                            span [attr.``class`` "name"] [text "NomadicBudget"]
                         ]
                         span [attr.``class`` "nb-tag"] [text "Digital Nomad Calculator"]
                     ]
 
                     // ── Main grid ────────────────────────────────────────
-                    div [attr.``class`` "nb-grid"] [
+                    div [attr.``class`` "nb-grid nb-stagger"] [
 
                         // ── Left: Budget Inputs ──────────────────────────
                         div [attr.``class`` "nb-card nb-card--accent"] [
-                            div [attr.``class`` "nb-card-title"] [
+                            div [attr.``class`` "nb-section-head"] [
                                 i [attr.``class`` "fas fa-sliders"] []
-                                text "Budget Inputs"
+                                span [attr.``class`` "t"] [text "Budget Inputs"]
                             ]
 
                             incomeField state
@@ -268,8 +313,8 @@ module Client =
                             taxModeSelect state
                         ]
 
-                        // ── Right: Stats + Chart ─────────────────────────
-                        div [attr.``class`` "nb-stagger"] [
+                        // ── Right: Stats + Charts ────────────────────────
+                        div [attr.style "display:flex;flex-direction:column;gap:14px"] [
 
                             // Hero KPI — Net Monthly Savings + sparkline
                             div [attr.``class`` "nb-card"] [
@@ -285,53 +330,49 @@ module Client =
                                     // Sparkline SVG — rendered by Charts.updateSparkline
                                     Doc.Element "svg" [
                                         attr.id "nb-sparkline"
-                                        attr.``class`` "nb-sparkline-svg"
-                                        Attr.Create "viewBox" "0 0 120 44"
+                                        attr.``class`` "nb-kpi-hero__spark"
+                                        Attr.Create "viewBox" "0 0 200 80"
                                         Attr.Create "xmlns"   "http://www.w3.org/2000/svg"
                                     ] []
                                 ]
-                                savingsBar state
                             ]
 
-                            // KPI row — Burn Rate + Monthly Tax (each with icon)
+                            // KPI row — Burn Rate + Monthly Tax
                             div [attr.``class`` "nb-kpi-row"] [
-                                div [attr.``class`` "nb-kpi"] [
-                                    div [attr.``class`` "nb-kpi__body"] [
+                                div [attr.``class`` "nb-card nb-card--hoverable nb-kpi nb-kpi--coral"] [
+                                    div [] [
                                         p [attr.``class`` "nb-kpi__label"] [text "Burn Rate"]
-                                        p [attr.``class`` "nb-kpi__value nb-kpi__value--coral"] [
-                                            textView burnView
-                                        ]
+                                        p [attr.``class`` "nb-kpi__value"] [textView burnView]
                                     ]
-                                    div [attr.``class`` "nb-kpi__icon nb-kpi__icon--coral"] [
-                                        i [attr.``class`` "fas fa-fire"] []
-                                    ]
+                                    i [attr.``class`` "fas fa-fire nb-kpi__icon"] []
                                 ]
-                                div [attr.``class`` "nb-kpi"] [
-                                    div [attr.``class`` "nb-kpi__body"] [
+                                div [attr.``class`` "nb-card nb-card--hoverable nb-kpi nb-kpi--amber"] [
+                                    div [] [
                                         p [attr.``class`` "nb-kpi__label"] [text "Monthly Tax"]
-                                        p [attr.``class`` "nb-kpi__value nb-kpi__value--amber"] [
-                                            textView taxView
-                                        ]
+                                        p [attr.``class`` "nb-kpi__value"] [textView taxView]
                                     ]
-                                    div [attr.``class`` "nb-kpi__icon nb-kpi__icon--amber"] [
-                                        i [attr.``class`` "fas fa-building-columns"] []
-                                    ]
+                                    i [attr.``class`` "fas fa-building-columns nb-kpi__icon"] []
                                 ]
                             ]
 
-                            // Expense Breakdown — doughnut left, legend right
+                            // Savings Rate bar
+                            savingsBar state
+
+                            // Expense Breakdown — doughnut + legend
                             div [attr.``class`` "nb-card"] [
-                                div [attr.``class`` "nb-card-title"] [
-                                    i [attr.``class`` "fas fa-coins"] []
-                                    text "Expense Breakdown"
+                                div [attr.``class`` "nb-section-head"] [
+                                    i [attr.``class`` "fas fa-chart-pie"] []
+                                    span [attr.``class`` "t"] [text "Expense Breakdown"]
                                 ]
                                 div [attr.``class`` "nb-chart-wrap"] [
-                                    Doc.Element "svg" [
-                                        attr.id "nb-donut"
-                                        attr.``class`` "nb-chart-svg"
-                                        Attr.Create "viewBox" "0 0 200 200"
-                                        Attr.Create "xmlns"   "http://www.w3.org/2000/svg"
-                                    ] []
+                                    div [attr.``class`` "nb-chart-canvas"] [
+                                        Doc.Element "svg" [
+                                            attr.id "nb-donut"
+                                            attr.``class`` "nb-chart-svg"
+                                            Attr.Create "viewBox" "0 0 200 200"
+                                            Attr.Create "xmlns"   "http://www.w3.org/2000/svg"
+                                        ] []
+                                    ]
                                     legendDoc
                                 ]
                             ]
