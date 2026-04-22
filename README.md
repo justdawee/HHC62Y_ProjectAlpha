@@ -14,7 +14,7 @@ A reactive, client-side SPA designed to solve the real-world problem of budgetin
 
 | Desktop Dashboard | Mobile View |
 |:---:|:---:|
-| ![Desktop Placeholder](https://via.placeholder.com/600x400?text=Desktop+Dashboard+Screenshot) | ![Mobile Placeholder](https://via.placeholder.com/300x600?text=Mobile+View+Screenshot) |
+| ![Desktop Placeholder](https://i.imgur.com/HsWGJZH.png) | ![Mobile Placeholder](https://i.imgur.com/LbEDmG9.png) |
 | *Reactive sliders and real-time Chart.js updates* | *Responsive Bulma-based layout* |
 
 > *Note: Add actual screenshots here after the final build.*
