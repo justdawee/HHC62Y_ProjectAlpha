@@ -278,11 +278,10 @@ module Client =
                                             textView netView
                                         ]
                                     ]
-                                    // Sparkline: OnAfterRender guarantees element is live in the DOM
-                                    Doc.Element "svg" [
+                                    // Sparkline: host div; the SVG element is created inside
+                                    // with the correct SVG namespace (see Charts.renderSparklineEl).
+                                    div [
                                         attr.``class`` "nb-kpi-hero__spark"
-                                        Attr.Create "viewBox" "0 0 200 80"
-                                        Attr.Create "xmlns"   "http://www.w3.org/2000/svg"
                                         Attr.OnAfterRender (fun (el: Dom.Element) ->
                                             state.View |> View.Sink (fun p ->
                                                 Charts.updateSparklineEl el p
@@ -320,20 +319,14 @@ module Client =
                                     span [attr.``class`` "t"] [text "Expense Breakdown"]
                                 ]
                                 div [attr.``class`` "nb-chart-wrap"] [
-                                    div [attr.``class`` "nb-chart-canvas"] [
-                                        // Donut: OnAfterRender fires with a direct element reference
-                                        // after the SVG is live in the DOM — no getElementById needed
-                                        Doc.Element "svg" [
-                                            Attr.Create "width"   "200"
-                                            Attr.Create "height"  "200"
-                                            Attr.Create "viewBox" "0 0 200 200"
-                                            Attr.Create "xmlns"   "http://www.w3.org/2000/svg"
-                                            Attr.OnAfterRender (fun (el: Dom.Element) ->
-                                                state.View |> View.Sink (fun p ->
-                                                    Charts.updateEl el p
-                                                )
+                                    div [
+                                        attr.``class`` "nb-chart-canvas"
+                                        Attr.OnAfterRender (fun (el: Dom.Element) ->
+                                            state.View |> View.Sink (fun p ->
+                                                Charts.updateEl el p
                                             )
-                                        ] []
+                                        )
+                                    ] [
                                         // Reactive centre text overlay
                                         div [attr.``class`` "nb-chart-center"] [
                                             div [attr.``class`` "lbl"] [text "Total"]

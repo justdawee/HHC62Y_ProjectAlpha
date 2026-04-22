@@ -8,18 +8,31 @@ open Domain
 module Charts =
 
     // ── Doughnut ────────────────────────────────────────────────────────────
-    // Takes the SVG element directly — no getElementById needed.
+    // `host` is a plain <div>. We create a real SVG element inside it via
+    // createElementNS (WebSharper's Doc.Element always uses createElement,
+    // which puts <svg> in the HTML namespace and breaks rendering).
 
     [<Inline """
-    (function(el, data, colors) {
-        if (!el) return;
-        while (el.firstChild) { el.removeChild(el.firstChild); }
+    (function(host, data, colors) {
+        if (!host) return;
 
-        var NS   = 'http://www.w3.org/2000/svg';
+        var NS = 'http://www.w3.org/2000/svg';
         var size = 200, stroke = 22;
         var r    = (size - stroke) / 2;   // 89
         var cx   = size / 2, cy = size / 2;
         var circ = 2 * Math.PI * r;
+
+        // Find or create the SVG root inside the host div
+        var svg = host.querySelector('svg.nb-donut-svg');
+        if (!svg) {
+            svg = document.createElementNS(NS, 'svg');
+            svg.setAttribute('class', 'nb-donut-svg');
+            svg.setAttribute('width', '200');
+            svg.setAttribute('height', '200');
+            svg.setAttribute('viewBox', '0 0 200 200');
+            host.appendChild(svg);
+        }
+        while (svg.firstChild) { svg.removeChild(svg.firstChild); }
 
         var sum = 0;
         for (var k = 0; k < data.length; k++) sum += data[k];
@@ -31,7 +44,7 @@ module Charts =
         base.setAttribute('fill', 'none');
         base.setAttribute('stroke', '#141B2D');
         base.setAttribute('stroke-width', stroke);
-        el.appendChild(base);
+        svg.appendChild(base);
 
         var acc = 0;
         for (var i = 0; i < data.length; i++) {
@@ -50,24 +63,39 @@ module Charts =
             seg.style.transition =
                 'stroke-dasharray 400ms cubic-bezier(0.22,1,0.36,1),' +
                 'stroke-dashoffset 400ms cubic-bezier(0.22,1,0.36,1)';
-            el.appendChild(seg);
+            svg.appendChild(seg);
             acc += frac;
         }
-    })($el, $data, $colors)
+    })($host, $data, $colors)
     """>]
-    let private renderDonutEl (el: Dom.Element) (data: float[]) (colors: string[]) : unit = ()
+    let private renderDonutEl (host: Dom.Element) (data: float[]) (colors: string[]) : unit = ()
 
-    let updateEl (el: Dom.Element) (profile: BudgetProfile) : unit =
+    let updateEl (host: Dom.Element) (profile: BudgetProfile) : unit =
         let data   = allCategories |> List.map (fun cat -> float (categoryValue profile cat)) |> Array.ofList
         let colors = allCategories |> List.map categoryColor |> Array.ofList
-        renderDonutEl el data colors
+        renderDonutEl host data colors
 
     // ── Sparkline ───────────────────────────────────────────────────────────
+    // Same pattern: `host` is a <div>, we mount an SVG inside it via createElementNS.
 
     [<Inline """
-    (function(el, ratio) {
-        if (!el) return;
-        while (el.firstChild) { el.removeChild(el.firstChild); }
+    (function(host, ratio) {
+        if (!host) return;
+
+        var NS = 'http://www.w3.org/2000/svg';
+
+        var svg = host.querySelector('svg.nb-spark-svg');
+        if (!svg) {
+            svg = document.createElementNS(NS, 'svg');
+            svg.setAttribute('class', 'nb-spark-svg');
+            svg.setAttribute('viewBox', '0 0 200 80');
+            svg.setAttribute('preserveAspectRatio', 'none');
+            svg.style.width = '100%';
+            svg.style.height = '100%';
+            svg.style.display = 'block';
+            host.appendChild(svg);
+        }
+        while (svg.firstChild) { svg.removeChild(svg.firstChild); }
 
         var r   = Math.max(-0.6, Math.min(0.8, ratio));
         var pts = [];
@@ -84,7 +112,6 @@ module Charts =
         var fill  = path + ' L200,80 L0,80 Z';
         var color = r >= 0 ? '#3DD6F5' : '#FF4D6D';
 
-        var NS   = 'http://www.w3.org/2000/svg';
         var defs = document.createElementNS(NS, 'defs');
         var grad = document.createElementNS(NS, 'linearGradient');
         grad.setAttribute('id', 'sp-g');
@@ -96,12 +123,12 @@ module Charts =
         s2.setAttribute('offset', '100%'); s2.setAttribute('stop-color', color); s2.setAttribute('stop-opacity', '0');
         grad.appendChild(s1); grad.appendChild(s2);
         defs.appendChild(grad);
-        el.appendChild(defs);
+        svg.appendChild(defs);
 
         var area = document.createElementNS(NS, 'path');
         area.setAttribute('d', fill);
         area.setAttribute('fill', 'url(#sp-g)');
-        el.appendChild(area);
+        svg.appendChild(area);
 
         var line = document.createElementNS(NS, 'path');
         line.setAttribute('d', path);
@@ -110,13 +137,13 @@ module Charts =
         line.setAttribute('stroke-width', '2');
         line.setAttribute('stroke-linecap', 'round');
         line.setAttribute('stroke-linejoin', 'round');
-        el.appendChild(line);
-    })($el, $ratio)
+        svg.appendChild(line);
+    })($host, $ratio)
     """>]
-    let private renderSparklineEl (el: Dom.Element) (ratio: float) : unit = ()
+    let private renderSparklineEl (host: Dom.Element) (ratio: float) : unit = ()
 
-    let updateSparklineEl (el: Dom.Element) (profile: BudgetProfile) : unit =
+    let updateSparklineEl (host: Dom.Element) (profile: BudgetProfile) : unit =
         let ratio =
             if profile.MonthlyIncome = 0.0<usd> then 0.0
             else float (netSavings profile) / float profile.MonthlyIncome
-        renderSparklineEl el ratio
+        renderSparklineEl host ratio

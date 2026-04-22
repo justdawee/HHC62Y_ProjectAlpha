@@ -8,40 +8,42 @@ function Main(){
   const state=_c.Create_1(load());
   Sink((p) => {
     save(p);
-    update(p);
-    updateSparkline(p);
   }, state.View);
   const netView=Map((x) => fmt(netSavings(x)), state.View);
   const burnView=Map((x) => fmt(burnRate(x)), state.View);
   const taxView=Map((p) => fmt(calculateTax(p.MonthlyIncome, p.TaxRate, p.TaxMode)), state.View);
-  const netClassView=Map((p) => netSavings(p)>=0?"nb-kpi-hero__value":"nb-kpi-hero__value nb-kpi-hero__value--neg", state.View);
-  const legendDoc=Doc.BindView((profile) => Doc.Element("div", [Attr.Create("class", "nb-chart-legend")], map((cat) => Doc.Element("div", [Attr.Create("class", "nb-leg-row")], [Doc.Element("div", [Attr.Create("class", "name")], [Doc.Element("div", [Attr.Create("class", "nb-leg-dot"), Attr.Create("style", (((_1) =>(_2) => _1("background:"+toSafe(_2)))((x) => x))(categoryColor(cat)))], []), Doc.Element("span", [], [Doc.TextNode(categoryName(cat))])]), Doc.Element("span", [Attr.Create("class", "v")], [Doc.TextNode(fmt(categoryValue(profile, cat)))])]), allCategories())), state.View);
-  const tr=Doc.Element("div", [Attr.Create("class", "nb-shell nb")], [Doc.Element("div", [Attr.Create("class", "nb-grain")], []), Doc.Element("div", [Attr.Create("class", "nb-container")], [Doc.Element("div", [Attr.Create("class", "nb-topbar")], [Doc.Element("div", [Attr.Create("class", "nb-brand")], [Doc.Element("svg", ofArray([Attr.Create("class", "nb-brand-icon"), Attr.Create("viewBox", "0 0 32 32"), Attr.Create("xmlns", "http://www.w3.org/2000/svg"), Attr.Create("fill", "none")]), ofArray([Doc.Element("defs", FSharpList.Empty, ofArray([Doc.Element("linearGradient", ofArray([Attr.Create("id", "lg"), Attr.Create("x1", "0%"), Attr.Create("y1", "0%"), Attr.Create("x2", "100%"), Attr.Create("y2", "100%")]), ofArray([Doc.Element("stop", ofArray([Attr.Create("offset", "0%"), Attr.Create("stop-color", "#F5A623")]), FSharpList.Empty), Doc.Element("stop", ofArray([Attr.Create("offset", "100%"), Attr.Create("stop-color", "#FF7A38")]), FSharpList.Empty)]))])), Doc.Element("circle", ofArray([Attr.Create("cx", "16"), Attr.Create("cy", "16"), Attr.Create("r", "14"), Attr.Create("stroke", "url(#lg)"), Attr.Create("stroke-width", "2")]), FSharpList.Empty), Doc.Element("ellipse", ofArray([Attr.Create("cx", "16"), Attr.Create("cy", "16"), Attr.Create("rx", "6"), Attr.Create("ry", "14"), Attr.Create("stroke", "url(#lg)"), Attr.Create("stroke-width", "1.5"), Attr.Create("stroke-dasharray", "3 4")]), FSharpList.Empty), Doc.Element("line", ofArray([Attr.Create("x1", "2"), Attr.Create("y1", "16"), Attr.Create("x2", "30"), Attr.Create("y2", "16"), Attr.Create("stroke", "url(#lg)"), Attr.Create("stroke-width", "1.5"), Attr.Create("stroke-dasharray", "3 4")]), FSharpList.Empty)])), Doc.Element("span", [Attr.Create("class", "name")], [Doc.TextNode("NomadicBudget")])]), Doc.Element("span", [Attr.Create("class", "nb-tag")], [Doc.TextNode("Digital Nomad Calculator")])]), Doc.Element("div", [Attr.Create("class", "nb-grid nb-stagger")], [Doc.Element("div", [Attr.Create("class", "nb-card nb-card--accent")], [Doc.Element("div", [Attr.Create("class", "nb-section-head")], [Doc.Element("i", [Attr.Create("class", "fas fa-sliders")], []), Doc.Element("span", [Attr.Create("class", "t")], [Doc.TextNode("Budget Inputs")])]), incomeField(state), Doc.Element("hr", [Attr.Create("class", "nb-divider")], []), sliderField("Housing", "fa-house", 0, 5000, 50, (p) => p.Housing, (_1, _2) => New(_2.MonthlyIncome, _1, _2.Food, _2.Transport, _2.Healthcare, _2.Fun, _2.Other, _2.TaxRate, _2.TaxMode, _2.Currency), state), sliderField("Food", "fa-utensils", 0, 2000, 25, (p) => p.Food, (_1, _2) => New(_2.MonthlyIncome, _2.Housing, _1, _2.Transport, _2.Healthcare, _2.Fun, _2.Other, _2.TaxRate, _2.TaxMode, _2.Currency), state), sliderField("Transport", "fa-car", 0, 1000, 25, (p) => p.Transport, (_1, _2) => New(_2.MonthlyIncome, _2.Housing, _2.Food, _1, _2.Healthcare, _2.Fun, _2.Other, _2.TaxRate, _2.TaxMode, _2.Currency), state), sliderField("Healthcare", "fa-heart-pulse", 0, 1000, 25, (p) => p.Healthcare, (_1, _2) => New(_2.MonthlyIncome, _2.Housing, _2.Food, _2.Transport, _1, _2.Fun, _2.Other, _2.TaxRate, _2.TaxMode, _2.Currency), state), sliderField("Fun", "fa-gamepad", 0, 2000, 25, (p) => p.Fun, (_1, _2) => New(_2.MonthlyIncome, _2.Housing, _2.Food, _2.Transport, _2.Healthcare, _1, _2.Other, _2.TaxRate, _2.TaxMode, _2.Currency), state), sliderField("Other", "fa-ellipsis", 0, 1000, 25, (p) => p.Other, (_1, _2) => New(_2.MonthlyIncome, _2.Housing, _2.Food, _2.Transport, _2.Healthcare, _2.Fun, _1, _2.TaxRate, _2.TaxMode, _2.Currency), state), Doc.Element("hr", [Attr.Create("class", "nb-divider")], []), taxRateField(state), taxModeSelect(state)]), Doc.Element("div", [Attr.Create("style", "display:flex;flex-direction:column;gap:14px")], [Doc.Element("div", [Attr.Create("class", "nb-card")], [Doc.Element("div", [Attr.Create("class", "nb-kpi-hero")], [Doc.Element("div", [], [Doc.Element("p", [Attr.Create("class", "nb-kpi-hero__eyebrow")], [Doc.TextNode("Net Monthly Savings")]), Doc.Element("p", [Dynamic("class", netClassView)], [Doc.TextView(netView)])]), Doc.Element("svg", ofArray([Attr.Create("id", "nb-sparkline"), Attr.Create("class", "nb-kpi-hero__spark"), Attr.Create("viewBox", "0 0 200 80"), Attr.Create("xmlns", "http://www.w3.org/2000/svg")]), FSharpList.Empty)])]), Doc.Element("div", [Attr.Create("class", "nb-kpi-row")], [Doc.Element("div", [Attr.Create("class", "nb-card nb-card--hoverable nb-kpi nb-kpi--coral")], [Doc.Element("div", [], [Doc.Element("p", [Attr.Create("class", "nb-kpi__label")], [Doc.TextNode("Burn Rate")]), Doc.Element("p", [Attr.Create("class", "nb-kpi__value")], [Doc.TextView(burnView)])]), Doc.Element("i", [Attr.Create("class", "fas fa-fire nb-kpi__icon")], [])]), Doc.Element("div", [Attr.Create("class", "nb-card nb-card--hoverable nb-kpi nb-kpi--amber")], [Doc.Element("div", [], [Doc.Element("p", [Attr.Create("class", "nb-kpi__label")], [Doc.TextNode("Monthly Tax")]), Doc.Element("p", [Attr.Create("class", "nb-kpi__value")], [Doc.TextView(taxView)])]), Doc.Element("i", [Attr.Create("class", "fas fa-building-columns nb-kpi__icon")], [])])]), savingsBar(state), Doc.Element("div", [Attr.Create("class", "nb-card")], [Doc.Element("div", [Attr.Create("class", "nb-section-head")], [Doc.Element("i", [Attr.Create("class", "fas fa-chart-pie")], []), Doc.Element("span", [Attr.Create("class", "t")], [Doc.TextNode("Expense Breakdown")])]), Doc.Element("div", [Attr.Create("class", "nb-chart-wrap")], [Doc.Element("div", [Attr.Create("class", "nb-chart-canvas")], [Doc.Element("svg", ofArray([Attr.Create("id", "nb-donut"), Attr.Create("class", "nb-chart-svg"), Attr.Create("viewBox", "0 0 200 200"), Attr.Create("xmlns", "http://www.w3.org/2000/svg")]), FSharpList.Empty)]), legendDoc])])])])])]);
+  const totalView=Map((p) =>(((_1) =>(_2) => _1("$"+_2.toFixed(0)))((x) => x))(totalExpenses(p)), state.View);
+  const netClassView=Map((p) => netSavings(p)>=0?"nb-kpi-hero__value positive":"nb-kpi-hero__value negative", state.View);
+  const legendDoc=Doc.BindView((profile) => Doc.Element("div", [Attr.Create("class", "nb-chart-legend")], map((cat) => Doc.Element("div", [Attr.Create("class", "nb-leg-row")], [Doc.Element("span", [Attr.Create("class", "name")], [Doc.Element("span", [Attr.Create("class", "dot"), Attr.Create("style", (((_1) =>(_2) => _1("background:"+toSafe(_2)))((x) => x))(categoryColor(cat)))], []), Doc.TextNode(categoryName(cat))]), Doc.Element("span", [Attr.Create("class", "v")], [Doc.TextNode(fmt(categoryValue(profile, cat)))])]), allCategories())), state.View);
+  const ui=Doc.Element("div", [Attr.Create("class", "nb-shell nb")], [Doc.Element("div", [Attr.Create("class", "nb-grain"), Attr.Create("aria-hidden", "true")], []), Doc.Element("div", [Attr.Create("class", "nb-container")], [Doc.Element("div", [Attr.Create("class", "nb-topbar")], [Doc.Element("div", [Attr.Create("class", "nb-brand")], [Doc.Element("i", [Attr.Create("class", "fa-solid fa-earth-americas")], []), Doc.Element("span", [Attr.Create("class", "name")], [Doc.TextNode("NomadicBudget")])]), Doc.Element("div", [Attr.Create("class", "nb-tag")], [Doc.TextNode("Digital Nomad Calculator")])]), Doc.Element("div", [Attr.Create("class", "nb-grid nb-stagger")], [Doc.Element("div", [Attr.Create("class", "nb-card nb-card--accent")], [Doc.Element("div", [Attr.Create("class", "nb-section-head")], [Doc.Element("i", [Attr.Create("class", "fa-solid fa-sliders")], []), Doc.Element("span", [Attr.Create("class", "t")], [Doc.TextNode("Budget Inputs")])]), incomeField(state), Doc.Element("hr", [Attr.Create("class", "nb-divider")], []), sliderField("Housing", "fa-house", 0, 5000, 50, (p) => p.Housing, (_1, _2) => New(_2.MonthlyIncome, _1, _2.Food, _2.Transport, _2.Healthcare, _2.Fun, _2.Other, _2.TaxRate, _2.TaxMode, _2.Currency), state), sliderField("Food", "fa-utensils", 0, 2000, 25, (p) => p.Food, (_1, _2) => New(_2.MonthlyIncome, _2.Housing, _1, _2.Transport, _2.Healthcare, _2.Fun, _2.Other, _2.TaxRate, _2.TaxMode, _2.Currency), state), sliderField("Transport", "fa-car", 0, 1000, 25, (p) => p.Transport, (_1, _2) => New(_2.MonthlyIncome, _2.Housing, _2.Food, _1, _2.Healthcare, _2.Fun, _2.Other, _2.TaxRate, _2.TaxMode, _2.Currency), state), sliderField("Healthcare", "fa-heart-pulse", 0, 1000, 25, (p) => p.Healthcare, (_1, _2) => New(_2.MonthlyIncome, _2.Housing, _2.Food, _2.Transport, _1, _2.Fun, _2.Other, _2.TaxRate, _2.TaxMode, _2.Currency), state), sliderField("Fun", "fa-gamepad", 0, 2000, 25, (p) => p.Fun, (_1, _2) => New(_2.MonthlyIncome, _2.Housing, _2.Food, _2.Transport, _2.Healthcare, _1, _2.Other, _2.TaxRate, _2.TaxMode, _2.Currency), state), sliderField("Other", "fa-ellipsis", 0, 1000, 25, (p) => p.Other, (_1, _2) => New(_2.MonthlyIncome, _2.Housing, _2.Food, _2.Transport, _2.Healthcare, _2.Fun, _1, _2.TaxRate, _2.TaxMode, _2.Currency), state), Doc.Element("hr", [Attr.Create("class", "nb-divider")], []), taxRateField(state), taxModeSelect(state)]), Doc.Element("div", [Attr.Create("style", "display:flex;flex-direction:column;gap:14px")], [Doc.Element("div", [Attr.Create("class", "nb-card nb-card--hoverable")], [Doc.Element("div", [Attr.Create("class", "nb-kpi-hero")], [Doc.Element("div", [], [Doc.Element("div", [Attr.Create("class", "nb-kpi-hero__label")], [Doc.TextNode("Net Monthly Savings")]), Doc.Element("div", [Dynamic("class", netClassView)], [Doc.TextView(netView)])]), Doc.Element("div", [Attr.Create("class", "nb-kpi-hero__spark"), OnAfterRender((el) => {
+    Sink((p) => {
+      updateSparklineEl(el, p);
+    }, state.View);
+  })], [])])]), Doc.Element("div", [Attr.Create("class", "nb-kpi-row")], [Doc.Element("div", [Attr.Create("class", "nb-card nb-card--hoverable nb-kpi nb-kpi--coral")], [Doc.Element("div", [], [Doc.Element("div", [Attr.Create("class", "nb-kpi__label")], [Doc.TextNode("Burn Rate")]), Doc.Element("div", [Attr.Create("class", "nb-kpi__value")], [Doc.TextView(burnView)])]), Doc.Element("i", [Attr.Create("class", "fa-solid fa-fire nb-kpi__icon")], [])]), Doc.Element("div", [Attr.Create("class", "nb-card nb-card--hoverable nb-kpi nb-kpi--amber")], [Doc.Element("div", [], [Doc.Element("div", [Attr.Create("class", "nb-kpi__label")], [Doc.TextNode("Monthly Tax")]), Doc.Element("div", [Attr.Create("class", "nb-kpi__value")], [Doc.TextView(taxView)])]), Doc.Element("i", [Attr.Create("class", "fa-solid fa-building-columns nb-kpi__icon")], [])])]), savingsBar(state), Doc.Element("div", [Attr.Create("class", "nb-card nb-chart-card")], [Doc.Element("div", [Attr.Create("class", "nb-section-head")], [Doc.Element("i", [Attr.Create("class", "fa-solid fa-chart-pie")], []), Doc.Element("span", [Attr.Create("class", "t")], [Doc.TextNode("Expense Breakdown")])]), Doc.Element("div", [Attr.Create("class", "nb-chart-wrap")], [Doc.Element("div", [Attr.Create("class", "nb-chart-canvas"), OnAfterRender((el) => {
+    Sink((p) => {
+      updateEl(el, p);
+    }, state.View);
+  })], [Doc.Element("div", [Attr.Create("class", "nb-chart-center")], [Doc.Element("div", [Attr.Create("class", "lbl")], [Doc.TextNode("Total")]), Doc.Element("div", [Attr.Create("class", "val")], [Doc.TextView(totalView)])])]), legendDoc])])])])])]);
   LoadLocalTemplates("");
-  Doc.RunById("main", tr);
-  StartImmediate(Delay(() => Bind_1(Sleep(80), () => {
-    update(state.Get());
-    updateSparkline(state.Get());
-    return Zero();
-  })), null);
+  Doc.RunById("main", ui);
 }
 function incomeField(state){
   const viewVal=Map((p) => p.MonthlyIncome, state.View);
-  return Doc.Element("div", [Attr.Create("class", "nb-field nb-field--income")], [Doc.Element("div", [Attr.Create("class", "nb-field__head")], [Doc.Element("label", [Attr.Create("class", "nb-field__label")], [Doc.Element("span", [Attr.Create("class", "nb-field__icon")], [Doc.Element("i", [Attr.Create("class", "fas fa-wallet")], [])]), Doc.TextNode("Monthly Income")]), Doc.Element("span", [Attr.Create("class", "nb-field__value")], [Doc.TextView(Map(((_1) =>(_2) => _1("$"+_2.toFixed(0)))((x) => x), viewVal))])]), Doc.Element("input", [Attr.Create("type", "range"), Attr.Create("class", "nb-range nb-range--income"), Attr.Create("min", "500"), Attr.Create("max", "20000"), Attr.Create("step", "100"), Dynamic("value", Map(String, viewVal)), Attr.HandlerImpl("input", (el) =>() => {
+  return Doc.Element("div", [Attr.Create("class", "nb-field nb-field--income")], [Doc.Element("div", [Attr.Create("class", "nb-field__head")], [Doc.Element("span", [Attr.Create("class", "nb-field__label")], [Doc.Element("i", [Attr.Create("class", "fa-solid fa-wallet")], []), Doc.TextNode("Monthly Income")]), Doc.Element("span", [Attr.Create("class", "nb-field__value")], [Doc.TextView(Map((v) =>(((_1) =>(_2) => _1("$"+_2.toFixed(0)))((x) => x))(v), viewVal))])]), Doc.Element("input", [Attr.Create("type", "range"), Attr.Create("class", "nb-range nb-range--income"), Attr.Create("min", "500"), Attr.Create("max", "20000"), Attr.Create("step", "100"), Dynamic("value", Map(String, viewVal)), Attr.HandlerImpl("input", (el) =>() => {
     const v=Number(el.value);
     return state.Update((p) => New(v*1, p.Housing, p.Food, p.Transport, p.Healthcare, p.Fun, p.Other, p.TaxRate, p.TaxMode, p.Currency));
   })], [])]);
 }
 function sliderField(lbl, icon, minV, maxV, stepV, get_1, setF, state){
   const viewVal=Map(get_1, state.View);
-  return Doc.Element("div", [Attr.Create("class", "nb-field")], [Doc.Element("div", [Attr.Create("class", "nb-field__head")], [Doc.Element("label", [Attr.Create("class", "nb-field__label")], [Doc.Element("span", [Attr.Create("class", "nb-field__icon")], [Doc.Element("i", [Attr.Create("class", (((_1) =>(_2) => _1("fas "+toSafe(_2)))((x) => x))(icon))], [])]), Doc.TextNode(lbl)]), Doc.Element("span", [Attr.Create("class", "nb-field__value")], [Doc.TextView(Map(((_1) =>(_2) => _1("$"+_2.toFixed(0)))((x) => x), viewVal))])]), Doc.Element("input", [Attr.Create("type", "range"), Attr.Create("class", "nb-range"), Attr.Create("min", String(minV)), Attr.Create("max", String(maxV)), Attr.Create("step", String(stepV)), Dynamic("value", Map(String, viewVal)), Attr.HandlerImpl("input", (el) =>() => {
+  return Doc.Element("div", [Attr.Create("class", "nb-field")], [Doc.Element("div", [Attr.Create("class", "nb-field__head")], [Doc.Element("span", [Attr.Create("class", "nb-field__label")], [Doc.Element("i", [Attr.Create("class", (((_1) =>(_2) => _1("fa-solid "+toSafe(_2)))((x) => x))(icon))], []), Doc.TextNode(lbl)]), Doc.Element("span", [Attr.Create("class", "nb-field__value")], [Doc.TextView(Map((v) =>(((_1) =>(_2) => _1("$"+_2.toFixed(0)))((x) => x))(v), viewVal))])]), Doc.Element("input", [Attr.Create("type", "range"), Attr.Create("class", "nb-range"), Attr.Create("min", String(minV)), Attr.Create("max", String(maxV)), Attr.Create("step", String(stepV)), Dynamic("value", Map(String, viewVal)), Attr.HandlerImpl("input", (el) =>() => {
     const v=Number(el.value);
     return state.Update((p) => setF(v*1, p));
   })], [])]);
 }
 function taxRateField(state){
   const viewPct=Map((p) => p.TaxRate*100, state.View);
-  return Doc.Element("div", [Attr.Create("class", "nb-field nb-field--tax")], [Doc.Element("div", [Attr.Create("class", "nb-field__head")], [Doc.Element("label", [Attr.Create("class", "nb-field__label")], [Doc.Element("span", [Attr.Create("class", "nb-field__icon")], [Doc.Element("i", [Attr.Create("class", "fas fa-percent")], [])]), Doc.TextNode("Tax Rate")]), Doc.Element("span", [Attr.Create("class", "nb-field__value")], [Doc.TextView(Map(((_1) =>(_2) => _1(_2.toFixed(0)+"%"))((x) => x), viewPct))])]), Doc.Element("input", [Attr.Create("type", "range"), Attr.Create("class", "nb-range nb-range--tax"), Attr.Create("min", "0"), Attr.Create("max", "60"), Attr.Create("step", "1"), Dynamic("value", Map(String, viewPct)), Attr.HandlerImpl("input", (el) =>() => {
+  return Doc.Element("div", [Attr.Create("class", "nb-field nb-field--tax")], [Doc.Element("div", [Attr.Create("class", "nb-field__head")], [Doc.Element("span", [Attr.Create("class", "nb-field__label")], [Doc.Element("i", [Attr.Create("class", "fa-solid fa-percent")], []), Doc.TextNode("Tax Rate")]), Doc.Element("span", [Attr.Create("class", "nb-field__value")], [Doc.TextView(Map((v) =>(((_1) =>(_2) => _1(_2.toFixed(0)+"%"))((x) => x))(v), viewPct))])]), Doc.Element("input", [Attr.Create("type", "range"), Attr.Create("class", "nb-range nb-range--tax"), Attr.Create("min", "0"), Attr.Create("max", "60"), Attr.Create("step", "1"), Dynamic("value", Map(String, viewPct)), Attr.HandlerImpl("input", (el) =>() => {
     const v=Number(el.value)/100;
     return state.Update((p) => New(p.MonthlyIncome, p.Housing, p.Food, p.Transport, p.Healthcare, p.Fun, p.Other, v, p.TaxMode, p.Currency));
   })], [])]);
@@ -49,23 +51,19 @@ function taxRateField(state){
 function taxModeSelect(state){
   const modeView=Map((p) => {
     const m=p.TaxMode;
-    return m.$==1?"1":m.$==2?"2":"0";
+    return m.$==1?"progressive":m.$==2?"social":"fixed";
   }, state.View);
-  return Doc.Element("div", [Attr.Create("class", "nb-field")], [Doc.Element("div", [Attr.Create("class", "nb-field__head")], [Doc.Element("label", [Attr.Create("class", "nb-field__label")], [Doc.Element("span", [Attr.Create("class", "nb-field__icon")], [Doc.Element("i", [Attr.Create("class", "fas fa-building-columns")], [])]), Doc.TextNode("Tax Mode")])]), Doc.Element("div", [Attr.Create("class", "nb-select-wrap")], [Doc.Element("select", [Attr.Create("class", "nb-select"), Dynamic("value", modeView), Attr.HandlerImpl("change", (el) =>() => {
+  return Doc.Element("div", [Attr.Create("class", "nb-field")], [Doc.Element("div", [Attr.Create("class", "nb-field__head")], [Doc.Element("span", [Attr.Create("class", "nb-field__label")], [Doc.Element("i", [Attr.Create("class", "fa-solid fa-building-columns")], []), Doc.TextNode("Tax Mode")])]), Doc.Element("div", [Attr.Create("class", "nb-select-wrap")], [Doc.Element("select", [Attr.Create("class", "nb-select"), Dynamic("value", modeView), Attr.HandlerImpl("change", (el) =>() => {
     const m=el.value;
-    const mode=m=="1"?Progressive:m=="2"?SocialSecurity:FixedRate;
+    const mode=m=="progressive"?Progressive:m=="social"?SocialSecurity:FixedRate;
     return state.Update((p) => New(p.MonthlyIncome, p.Housing, p.Food, p.Transport, p.Healthcare, p.Fun, p.Other, p.TaxRate, mode, p.Currency));
-  })], [Doc.Element("option", [Attr.Create("value", "0")], [Doc.TextNode("Fixed Rate")]), Doc.Element("option", [Attr.Create("value", "1")], [Doc.TextNode("Progressive (brackets)")]), Doc.Element("option", [Attr.Create("value", "2")], [Doc.TextNode("Self-Employment / SS (15.3%)")])])])]);
+  })], [Doc.Element("option", [Attr.Create("value", "fixed")], [Doc.TextNode("Fixed Rate")]), Doc.Element("option", [Attr.Create("value", "progressive")], [Doc.TextNode("Progressive")]), Doc.Element("option", [Attr.Create("value", "social")], [Doc.TextNode("Social Security (15.3%)")])])])]);
 }
 function savingsBar(state){
   const rateView=Map(savingsRate, state.View);
-  const pctText=Map((r) => {
-    let _1=((_3) =>(_4) => _3(_4.toFixed(1)+"%"))((x) => x);
-    const a=0;
-    let _2=Compare(a, r)===1?a:r;
-    return _1(_2);
-  }, rateView);
-  const fillStyle=Map((r) => {
+  const pctText=Map((r) =>(((_1) =>(_2) => _1(_2.toFixed(1)+"%"))((x) => x))(r), rateView);
+  const pctCls=Map((r) => r<5?"nb-savings__pct negative":r<30?"nb-savings__pct stable":"nb-savings__pct", rateView);
+  const fillWidth=Map((r) => {
     let _1=((_3) =>(_4) => _3("width:"+_4.toFixed(1)+"%"))((x) => x);
     const a=0;
     const a_1=100;
@@ -73,8 +71,10 @@ function savingsBar(state){
     let _2=Compare(a, b)===1?a:b;
     return _1(_2);
   }, rateView);
-  const pctCls=Map((r) => r>=30?"nb-savings__pct nb-savings__pct--thriving":r>=5?"nb-savings__pct nb-savings__pct--stable":"nb-savings__pct nb-savings__pct--danger", rateView);
-  return Doc.Element("div", [Attr.Create("class", "nb-savings")], [Doc.Element("div", [Attr.Create("class", "nb-savings__header")], [Doc.Element("span", [Attr.Create("class", "nb-savings__label")], [Doc.TextNode("Savings Rate")]), Doc.Element("span", [Dynamic("class", pctCls)], [Doc.TextView(pctText)])]), Doc.Element("div", [Attr.Create("class", "nb-savings__track")], [Doc.Element("div", [Attr.Create("class", "nb-savings__fill"), Dynamic("style", fillStyle)], [])]), Doc.Element("div", [Attr.Create("class", "nb-savings__zones")], [Doc.Element("span", [Attr.Create("class", "nb-savings__zone")], [Doc.TextNode("Danger <5%")]), Doc.Element("span", [Attr.Create("class", "nb-savings__zone")], [Doc.TextNode("Stable >5%")]), Doc.Element("span", [Attr.Create("class", "nb-savings__zone")], [Doc.TextNode("Thriving >30%")])])]);
+  const dangerCls=Map((r) => r<5?"danger active":"danger", rateView);
+  const stableCls=Map((r) => r>=5&&r<30?"stable active":"stable", rateView);
+  const thrivingCls=Map((r) => r>=30?"thriving active":"thriving", rateView);
+  return Doc.Element("div", [Attr.Create("class", "nb-card nb-savings")], [Doc.Element("div", [Attr.Create("class", "nb-savings__head")], [Doc.Element("span", [Attr.Create("class", "nb-savings__label")], [Doc.TextNode("Savings Rate")]), Doc.Element("span", [Dynamic("class", pctCls)], [Doc.TextView(pctText)])]), Doc.Element("div", [Attr.Create("class", "nb-savings__track")], [Doc.Element("div", [Attr.Create("class", "nb-savings__fill"), Dynamic("style", fillWidth)], [])]), Doc.Element("div", [Attr.Create("class", "nb-savings__zones")], [Doc.Element("span", [Dynamic("class", dangerCls)], [Doc.TextNode("Danger <5%")]), Doc.Element("span", [Dynamic("class", stableCls)], [Doc.TextNode("Stable >5%")]), Doc.Element("span", [Dynamic("class", thrivingCls)], [Doc.TextNode("Thriving >30%")])])]);
 }
 function fmt(amount){
   return amount>=0?(((_1) =>(_2) => _1("$"+_2.toFixed(0)))((x) => x))(amount):(((_1) =>(_2) => _1("-$"+_2.toFixed(0)))((x) => x))(Math.abs(amount));
@@ -166,262 +166,24 @@ function Const(x){
   const o={s:Forever(x)};
   return() => o;
 }
-function Map2Unit(a, a_1){
-  return CreateLazy(() => Map2Unit_1(a(), a_1()));
-}
 function Bind(fn, view){
   return Join(Map(fn, view));
 }
 function Join(a){
   return CreateLazy(() => Join_1(a()));
 }
-function update(profile){
-  (((data, colors, total) => {
-    const el=document.getElementById("nb-donut");
-    if(!el)return;
-    while(el.firstChild)
-      el.removeChild(el.firstChild);
-    const NS="http://www.w3.org/2000/svg";
-    const cx=100;
-    const cy=100;
-    const r=89;
-    const sw=22;
-    const circ=2*Math.PI*r;
-    const base=document.createElementNS(NS, "circle");
-    base.setAttribute("cx", cx);
-    base.setAttribute("cy", cy);
-    base.setAttribute("r", r);
-    base.setAttribute("fill", "none");
-    base.setAttribute("stroke", "#141B2D");
-    base.setAttribute("stroke-width", sw);
-    el.appendChild(base);
-    if(total<=0)return;
-    let acc=0;
-    for(let i=0;i<data.length;i++){
-      if(data[i]<=0)continue;
-      const frac=data[i]/total;
-      const len=frac*circ;
-      const seg=document.createElementNS(NS, "circle");
-      seg.setAttribute("cx", cx);
-      seg.setAttribute("cy", cy);
-      seg.setAttribute("r", r);
-      seg.setAttribute("fill", "none");
-      seg.setAttribute("stroke", colors[i]);
-      seg.setAttribute("stroke-width", sw);
-      seg.setAttribute("stroke-dasharray", len.toFixed(3)+" "+(circ-len).toFixed(3));
-      seg.setAttribute("stroke-dashoffset", (-acc*circ).toFixed(3));
-      seg.setAttribute("transform", "rotate(-90 "+cx+" "+cy+")");
-      el.appendChild(seg);
-      acc+=frac;
-    }
-    const t1=document.createElementNS(NS, "text");
-    t1.setAttribute("x", "100");
-    t1.setAttribute("y", "94");
-    t1.setAttribute("text-anchor", "middle");
-    t1.setAttribute("fill", "#AEB6C6");
-    t1.setAttribute("font-family", "DM Mono, monospace");
-    t1.setAttribute("font-size", "9");
-    t1.setAttribute("letter-spacing", "2");
-    t1.textContent="TOTAL";
-    el.appendChild(t1);
-    const t2=document.createElementNS(NS, "text");
-    t2.setAttribute("x", "100");
-    t2.setAttribute("y", "116");
-    t2.setAttribute("text-anchor", "middle");
-    t2.setAttribute("fill", "#E8ECF4");
-    t2.setAttribute("font-family", "Syne, sans-serif");
-    t2.setAttribute("font-weight", "700");
-    t2.setAttribute("font-size", "20");
-    t2.textContent="$"+Math.round(total).toLocaleString();
-    el.appendChild(t2);
-  })(ofList(map((cat) => categoryValue(profile, cat), allCategories())), ofList(map(categoryColor, allCategories())), totalExpenses(profile)));
-}
-function updateSparkline(profile){
-  (((ratio) => {
-    const el=document.getElementById("nb-sparkline");
-    if(!el)return;
-    while(el.firstChild)
-      el.removeChild(el.firstChild);
-    const r=Math.max(-0.6, Math.min(0.8, ratio));
-    const pts=[];
-    for(let i=0;i<=20;i++){
-      const x=i/20;
-      const y=0.55-r*0.45*(0.4+0.6*x)+Math.sin(x*6+r*2)*0.05;
-      pts.push([x*200, y*80]);
-    }
-    const lineColor=r>=0?"#3DD6F5":"#FF4D6D";
-    let d="M "+pts[0][0].toFixed(2)+","+pts[0][1].toFixed(2);
-    for(let i_1=1;i_1<pts.length;i_1++){
-      const cpx=(pts[i_1-1][0]+pts[i_1][0])/2;
-      d+=" C "+cpx.toFixed(2)+","+pts[i_1-1][1].toFixed(2)+" "+cpx.toFixed(2)+","+pts[i_1][1].toFixed(2)+" "+pts[i_1][0].toFixed(2)+","+pts[i_1][1].toFixed(2);
-    }
-    const NS="http://www.w3.org/2000/svg";
-    const defs=document.createElementNS(NS, "defs");
-    const grad=document.createElementNS(NS, "linearGradient");
-    grad.setAttribute("id", "spk-g");
-    grad.setAttribute("x1", "0");
-    grad.setAttribute("y1", "0");
-    grad.setAttribute("x2", "0");
-    grad.setAttribute("y2", "1");
-    const s1=document.createElementNS(NS, "stop");
-    s1.setAttribute("offset", "0%");
-    s1.setAttribute("stop-color", lineColor);
-    s1.setAttribute("stop-opacity", "0.35");
-    const s2=document.createElementNS(NS, "stop");
-    s2.setAttribute("offset", "100%");
-    s2.setAttribute("stop-color", lineColor);
-    s2.setAttribute("stop-opacity", "0.02");
-    grad.appendChild(s1);
-    grad.appendChild(s2);
-    defs.appendChild(grad);
-    el.appendChild(defs);
-    const area=document.createElementNS(NS, "path");
-    area.setAttribute("d", d+" L200,80 L0,80 Z");
-    area.setAttribute("fill", "url(#spk-g)");
-    el.appendChild(area);
-    const line=document.createElementNS(NS, "path");
-    line.setAttribute("d", d);
-    line.setAttribute("fill", "none");
-    line.setAttribute("stroke", lineColor);
-    line.setAttribute("stroke-width", "2");
-    line.setAttribute("stroke-linecap", "round");
-    line.setAttribute("stroke-linejoin", "round");
-    el.appendChild(line);
-  })(profile.MonthlyIncome===0?0:netSavings(profile)/profile.MonthlyIncome));
+function Map2Unit(a, a_1){
+  return CreateLazy(() => Map2Unit_1(a(), a_1()));
 }
 class attr extends Object_1 { }
-class Doc extends Object_1 {
-  docNode;
-  updates;
-  static Element(name, attr_1, children){
-    const a=Attr.Concat(attr_1);
-    const c=Doc.Concat(children);
-    return Elt.New(globalThis.document.createElement(name), a, c);
-  }
-  static RunById(id, tr){
-    const m=globalThis.document.getElementById(id);
-    if(Equals(m, null))FailWith("invalid id: "+id);
-    else Doc.Run(m, tr);
-  }
-  static Concat(xs){
-    return TreeReduce(Doc.Empty, Doc.Append, ofSeqNonCopying(xs));
-  }
-  static TextNode(v){
-    return Doc.Mk(TextNodeDoc(globalThis.document.createTextNode(v)), Const());
-  }
-  static BindView(f, view){
-    return Doc.EmbedView(Map(f, view));
-  }
-  static Run(parent, doc){
-    LinkElement(parent, doc.docNode);
-    Doc.RunInPlace(false, parent, doc);
-  }
-  static Append(a, b){
-    return Doc.Mk(AppendDoc(a.docNode, b.docNode), Map2Unit(a.updates, b.updates));
-  }
-  static get Empty(){
-    return Doc.Mk(null, Const());
-  }
-  static Mk(node, updates){
-    return new Doc(node, updates);
-  }
-  static TextView(txt){
-    const node=CreateTextNode();
-    return Doc.Mk(TextDoc(node), Map((t) => {
-      UpdateTextNode(node, t);
-    }, txt));
-  }
-  static EmbedView(view){
-    const node=CreateEmbedNode();
-    return Doc.Mk(EmbedDoc(node), Map(() => { }, Bind((doc) => {
-      UpdateEmbedNode(node, doc.docNode);
-      return doc.updates;
-    }, view)));
-  }
-  static RunInPlace(childrenOnly, parent, doc){
-    const st=CreateRunState(parent, doc.docNode);
-    Sink(get_UseAnimations()||BatchUpdatesEnabled()?StartProcessor(PerformAnimatedUpdate(childrenOnly, st, doc.docNode)):() => {
-      PerformSyncUpdate(childrenOnly, st, doc.docNode);
-    }, doc.updates);
-  }
-  constructor(docNode, updates){
-    super();
-    this.docNode=docNode;
-    this.updates=updates;
-  }
-}
-function ofArray(arr){
-  let r=FSharpList.Empty;
-  for(let i=length(arr)-1, _1=0;i>=_1;i--)r=FSharpList.Cons(get(arr, i), r);
-  return r;
-}
-function map(f, x){
-  let r;
-  let l;
-  let go;
-  if(x.$==0)return x;
-  else {
-    const res=Create_1(FSharpList, {$:1});
-    r=res;
-    l=x;
-    go=true;
-    while(go)
-      {
-        r.$0=f(l.$0);
-        l=l.$1;
-        if(l.$==0)go=false;
-        else {
-          const t=Create_1(FSharpList, {$:1});
-          r=(r.$1=t,t);
-        }
-      }
-    r.$1=FSharpList.Empty;
-    return res;
-  }
-}
-function head(l){
-  return l.$==1?l.$0:listEmpty();
-}
-function tail(l){
-  return l.$==1?l.$1:listEmpty();
-}
-function listEmpty(){
-  return FailWith("The input list was empty.");
-}
-class FSharpList {
-  static Empty=Create_1(FSharpList, {$:0});
-  static Cons(Head, Tail){
-    return Create_1(FSharpList, {
-      $:1, 
-      $0:Head, 
-      $1:Tail
-    });
-  }
-  GetEnumerator(){
-    return new T(this, null, (e) => {
-      const m=e.s;
-      if(m.$==0)return false;
-      else {
-        const xs=m.$1;
-        e.c=m.$0;
-        e.s=xs;
-        return true;
-      }
-    }, void 0);
-  }
-  $;
-  $0;
-  $1;
-}
 class Attr {
   static Create(name, value){
     return Attr.A3((el) => {
       el.setAttribute(name, value);
     });
   }
-  static Concat(xs){
-    const x=ofSeqNonCopying(xs);
-    return TreeReduce(EmptyAttr(), (_1, _2) => AppendTree(_1, _2), x);
+  static A4(onAfterRender){
+    return Create_1(Attr, {$:4, $0:onAfterRender});
   }
   static A3(init_2){
     return Create_1(Attr, {$:3, $0:init_2});
@@ -433,6 +195,10 @@ class Attr {
   }
   static A1(Item){
     return Create_1(Attr, {$:1, $0:Item});
+  }
+  static Concat(xs){
+    const x=ofSeqNonCopying(xs);
+    return TreeReduce(EmptyAttr(), (_1, _2) => AppendTree(_1, _2), x);
   }
   static A2(Item1, Item2){
     return Create_1(Attr, {
@@ -462,6 +228,123 @@ function New(MonthlyIncome, Housing_1, Food_1, Transport_1, Healthcare_1, Fun_1,
 function Dynamic(name, view){
   return Dynamic_1(view, (el) =>(v) => el.setAttribute(name, v));
 }
+function OnAfterRender(callback){
+  return Attr.A4(callback);
+}
+function updateSparklineEl(host, profile){
+  (((host_1, ratio) => {
+    if(!host_1)return;
+    const NS="http://www.w3.org/2000/svg";
+    let svg=host_1.querySelector("svg.nb-spark-svg");
+    if(!svg){
+      svg=document.createElementNS(NS, "svg");
+      svg.setAttribute("class", "nb-spark-svg");
+      svg.setAttribute("viewBox", "0 0 200 80");
+      svg.setAttribute("preserveAspectRatio", "none");
+      svg.style.width="100%";
+      svg.style.height="100%";
+      svg.style.display="block";
+      host_1.appendChild(svg);
+    }
+    while(svg.firstChild)
+      svg.removeChild(svg.firstChild);
+    const r=Math.max(-0.6, Math.min(0.8, ratio));
+    const pts=[];
+    for(let i=0;i<=20;i++){
+      const x=i/20;
+      const y=0.55-r*0.45*(0.4+0.6*x)+Math.sin(x*6+r*2)*0.05;
+      pts.push([x*200, y*80]);
+    }
+    const path=pts.map((p, i_1) =>(i_1===0?"M":"L")+p[0].toFixed(1)+","+p[1].toFixed(1)).join(" ");
+    const fill_1=path+" L200,80 L0,80 Z";
+    const color=r>=0?"#3DD6F5":"#FF4D6D";
+    const defs=document.createElementNS(NS, "defs");
+    const grad=document.createElementNS(NS, "linearGradient");
+    grad.setAttribute("id", "sp-g");
+    grad.setAttribute("x1", "0");
+    grad.setAttribute("y1", "0");
+    grad.setAttribute("x2", "0");
+    grad.setAttribute("y2", "1");
+    const s1=document.createElementNS(NS, "stop");
+    s1.setAttribute("offset", "0%");
+    s1.setAttribute("stop-color", color);
+    s1.setAttribute("stop-opacity", "0.35");
+    const s2=document.createElementNS(NS, "stop");
+    s2.setAttribute("offset", "100%");
+    s2.setAttribute("stop-color", color);
+    s2.setAttribute("stop-opacity", "0");
+    grad.appendChild(s1);
+    grad.appendChild(s2);
+    defs.appendChild(grad);
+    svg.appendChild(defs);
+    const area=document.createElementNS(NS, "path");
+    area.setAttribute("d", fill_1);
+    area.setAttribute("fill", "url(#sp-g)");
+    svg.appendChild(area);
+    const line=document.createElementNS(NS, "path");
+    line.setAttribute("d", path);
+    line.setAttribute("fill", "none");
+    line.setAttribute("stroke", color);
+    line.setAttribute("stroke-width", "2");
+    line.setAttribute("stroke-linecap", "round");
+    line.setAttribute("stroke-linejoin", "round");
+    svg.appendChild(line);
+  })(host, profile.MonthlyIncome===0?0:netSavings(profile)/profile.MonthlyIncome));
+}
+function updateEl(host, profile){
+  (((host_1, data, colors) => {
+    if(!host_1)return;
+    const NS="http://www.w3.org/2000/svg";
+    const size=200;
+    const stroke=22;
+    const r=(size-stroke)/2;
+    const cx=size/2;
+    const cy=size/2;
+    const circ=2*Math.PI*r;
+    let svg=host_1.querySelector("svg.nb-donut-svg");
+    if(!svg){
+      svg=document.createElementNS(NS, "svg");
+      svg.setAttribute("class", "nb-donut-svg");
+      svg.setAttribute("width", "200");
+      svg.setAttribute("height", "200");
+      svg.setAttribute("viewBox", "0 0 200 200");
+      host_1.appendChild(svg);
+    }
+    while(svg.firstChild)
+      svg.removeChild(svg.firstChild);
+    let sum=0;
+    for(let k=0;k<data.length;k++)sum+=data[k];
+    if(sum<=0)sum=1;
+    const base=document.createElementNS(NS, "circle");
+    base.setAttribute("cx", cx);
+    base.setAttribute("cy", cy);
+    base.setAttribute("r", r);
+    base.setAttribute("fill", "none");
+    base.setAttribute("stroke", "#141B2D");
+    base.setAttribute("stroke-width", stroke);
+    svg.appendChild(base);
+    let acc=0;
+    for(let i=0;i<data.length;i++){
+      const frac=data[i]/sum;
+      const len=frac*circ;
+      const dash=len+" "+(circ-len);
+      const offset=(-acc*circ).toFixed(4);
+      const seg=document.createElementNS(NS, "circle");
+      seg.setAttribute("cx", cx);
+      seg.setAttribute("cy", cy);
+      seg.setAttribute("r", r);
+      seg.setAttribute("fill", "none");
+      seg.setAttribute("stroke", colors[i]);
+      seg.setAttribute("stroke-width", stroke);
+      seg.setAttribute("stroke-dasharray", dash);
+      seg.setAttribute("stroke-dashoffset", offset);
+      seg.setAttribute("transform", "rotate(-90 "+cx+" "+cy+")");
+      seg.style.transition="stroke-dasharray 400ms cubic-bezier(0.22,1,0.36,1),stroke-dashoffset 400ms cubic-bezier(0.22,1,0.36,1)";
+      svg.appendChild(seg);
+      acc+=frac;
+    }
+  })(host, ofList(map((cat) => categoryValue(profile, cat), allCategories())), ofList(map(categoryColor, allCategories()))));
+}
 function allCategories(){
   return _c_1.allCategories;
 }
@@ -476,6 +359,9 @@ function categoryValue(p, cat){
 }
 function netSavings(p){
   return p.MonthlyIncome-calculateTax(p.MonthlyIncome, p.TaxRate, p.TaxMode)-totalExpenses(p);
+}
+function totalExpenses(p){
+  return p.Housing+p.Food+p.Transport+p.Healthcare+p.Fun+p.Other;
 }
 function calculateTax(income, rate, mode){
   if(mode.$==1){
@@ -504,11 +390,46 @@ function burnRate(p){
 function defaultProfile(){
   return _c_1.defaultProfile;
 }
-function totalExpenses(p){
-  return p.Housing+p.Food+p.Transport+p.Healthcare+p.Fun+p.Other;
-}
 function savingsRate(p){
   return p.MonthlyIncome===0?0:netSavings(p)/p.MonthlyIncome*100;
+}
+function map(f, x){
+  let r;
+  let l;
+  let go;
+  if(x.$==0)return x;
+  else {
+    const res=Create_1(FSharpList, {$:1});
+    r=res;
+    l=x;
+    go=true;
+    while(go)
+      {
+        r.$0=f(l.$0);
+        l=l.$1;
+        if(l.$==0)go=false;
+        else {
+          const t=Create_1(FSharpList, {$:1});
+          r=(r.$1=t,t);
+        }
+      }
+    r.$1=FSharpList.Empty;
+    return res;
+  }
+}
+function ofArray(arr){
+  let r=FSharpList.Empty;
+  for(let i=length(arr)-1, _1=0;i>=_1;i--)r=FSharpList.Cons(get(arr, i), r);
+  return r;
+}
+function head(l){
+  return l.$==1?l.$0:listEmpty();
+}
+function tail(l){
+  return l.$==1?l.$1:listEmpty();
+}
+function listEmpty(){
+  return FailWith("The input list was empty.");
 }
 function toSafe(s){
   return s==null?"":s;
@@ -522,9 +443,6 @@ class ConcreteVar extends Var {
   get View(){
     return this.view;
   }
-  Get(){
-    return this.current;
-  }
   Update(f){
     this.Set(f(this.Get()));
   }
@@ -537,6 +455,9 @@ class ConcreteVar extends Var {
       this.current=v;
       this.snap={s:Ready(v, [])};
     }
+  }
+  Get(){
+    return this.current;
   }
   UpdateMaybe(f){
     const m=f(this.Get());
@@ -638,6 +559,24 @@ function MarkReady(sn, v){
   }
   else void 0;
 }
+function Join_1(snap){
+  const res={s:Waiting([], [])};
+  When(snap, (x) => {
+    const y=x();
+    When(y, (v) => {
+      let _1;
+      const _2=y.s;
+      if(_2!=null&&_2.$==0){
+        const _3=snap.s;
+        _1=_3!=null&&_3.$==0;
+      }
+      else _1=false;
+      if(_1)MarkForever(res, v);
+      else MarkReady(res, v);
+    }, res);
+  }, res);
+  return res;
+}
 function Copy(sn){
   const m=sn.s;
   if(m==null)return sn;
@@ -685,23 +624,13 @@ function ValueAndForever(snap){
   const m=snap.s;
   return m!=null&&m.$==0?Some([m.$0, true]):m!=null&&m.$==2?Some([m.$0, false]):null;
 }
-function Join_1(snap){
-  const res={s:Waiting([], [])};
-  When(snap, (x) => {
-    const y=x();
-    When(y, (v) => {
-      let _1;
-      const _2=y.s;
-      if(_2!=null&&_2.$==0){
-        const _3=snap.s;
-        _1=_3!=null&&_3.$==0;
-      }
-      else _1=false;
-      if(_1)MarkForever(res, v);
-      else MarkReady(res, v);
-    }, res);
-  }, res);
-  return res;
+function scheduler(){
+  return _c_5.scheduler;
+}
+function Return(x){
+  return(c) => {
+    c.k(Ok(x));
+  };
 }
 function Delay(mk){
   return(c) => {
@@ -715,7 +644,7 @@ function Delay(mk){
 }
 function Bind_1(r, f){
   return checkCancel((c) => {
-    r(New_2((a) => {
+    r(New_3((a) => {
       if(a.$==0){
         const x=a.$0;
         scheduler().Fork(() => {
@@ -733,35 +662,17 @@ function Bind_1(r, f){
     }, c.ct));
   });
 }
-function Sleep(ms){
-  return(c) => {
-    let pending;
-    let creg;
-    pending=void 0;
-    creg=void 0;
-    pending=setTimeout(() => {
-      creg.Dispose();
-      scheduler().Fork(() => {
-        c.k(Ok(null));
-      });
-    }, ms);
-    creg=Register(c.ct, () => {
-      clearTimeout(pending);
-      scheduler().Fork(() => {
-        cancel(c);
-      });
-    });
-  };
-}
 function Zero(){
-  return _c_3.Zero;
+  return _c_5.Zero;
 }
-function StartImmediate(c, ctOpt){
+function Start(c, ctOpt){
   const d=(defCTS())[0];
   const ct=ctOpt==null?d:ctOpt.$0;
-  if(!ct.c)c(New_2((a) => {
-    if(a.$==1)UncaughtAsyncError(a.$0);
-  }, ct));
+  scheduler().Fork(() => {
+    if(!ct.c)c(New_3((a) => {
+      if(a.$==1)UncaughtAsyncError(a.$0);
+    }, ct));
+  });
 }
 function checkCancel(r){
   return(c) => {
@@ -769,45 +680,11 @@ function checkCancel(r){
     else r(c);
   };
 }
-function Register(ct, callback){
-  if(ct===noneCT())return{Dispose(){
-    return null;
-  }};
-  else {
-    const i=ct.r.push(callback)-1;
-    return{Dispose(){
-      return set(ct.r, i, () => { });
-    }};
-  }
-}
-function cancel(c){
-  c.k(Cc(new OperationCanceledException("New", c.ct)));
-}
 function defCTS(){
-  return _c_3.defCTS;
+  return _c_5.defCTS;
 }
 function UncaughtAsyncError(e){
   console.log("WebSharper: Uncaught asynchronous exception", e);
-}
-function scheduler(){
-  return _c_3.scheduler;
-}
-function noneCT(){
-  return _c_3.noneCT;
-}
-function Return(x){
-  return(c) => {
-    c.k(Ok(x));
-  };
-}
-function Start(c, ctOpt){
-  const d=(defCTS())[0];
-  const ct=ctOpt==null?d:ctOpt.$0;
-  scheduler().Fork(() => {
-    if(!ct.c)c(New_2((a) => {
-      if(a.$==1)UncaughtAsyncError(a.$0);
-    }, ct));
-  });
 }
 function FromContinuations(subscribe){
   return(c) => {
@@ -834,6 +711,9 @@ function FromContinuations(subscribe){
     });
   };
 }
+function cancel(c){
+  c.k(Cc(new OperationCanceledException("New", c.ct)));
+}
 function NewFromSeq(fields){
   const r={};
   const e=Get(fields);
@@ -850,128 +730,15 @@ function NewFromSeq(fields){
   }
   return r;
 }
-function ofList(xs){
-  const q=[];
-  let l=xs;
-  while(!(l.$==0))
-    {
-      q.push(head(l));
-      l=tail(l);
-    }
-  return q;
-}
-function exists(f, x){
-  let e=false;
-  let i=0;
-  const l=length(x);
-  while(!e&&i<l)
-    if(f(x[i]))e=true;
-    else i=i+1;
-  return e;
-}
-function tryPick(f, arr){
-  let res=null;
-  let i=0;
-  while(i<arr.length&&res==null)
-    {
-      const m=f(arr[i]);
-      if(m!=null&&m.$==1)res=m;
-      i=i+1;
-    }
-  return res;
-}
-function tryFindIndex(f, arr){
-  let res=null;
-  let i=0;
-  while(i<arr.length&&res==null)
-    {
-      f(arr[i])?res=Some(i):void 0;
-      i=i+1;
-    }
-  return res;
-}
-function filter(f, arr){
-  const r=[];
-  for(let i=0, _1=arr.length-1;i<=_1;i++)if(f(arr[i]))r.push(arr[i]);
-  return r;
-}
-function map_1(f, arr){
-  const r=new Array(arr.length);
-  for(let i=0, _1=arr.length-1;i<=_1;i++)r[i]=f(arr[i]);
-  return r;
-}
-function iter(f, arr){
-  for(let i=0, _1=arr.length-1;i<=_1;i++)f(arr[i]);
-}
-function foldBack(f, arr, zero){
-  let acc=zero;
-  const len=arr.length;
-  for(let i=1, _1=len;i<=_1;i++)acc=f(arr[len-i], acc);
-  return acc;
-}
-function concat(xs){
-  return Array.prototype.concat.apply([], ofSeq(xs));
-}
-function pick(f, arr){
-  const m=tryPick(f, arr);
-  return m==null?FailWith("KeyNotFoundException"):m.$0;
-}
-function ofSeq(xs){
-  if(xs instanceof Array)return xs.slice();
-  else if(xs instanceof FSharpList)return ofList(xs);
-  else {
-    const q=[];
-    const o=Get(xs);
-    try {
-      while(o.MoveNext())
-        q.push(o.Current);
-      return q;
-    }
-    finally {
-      const _1=o;
-      if(typeof _1=="object"&&isIDisposable(_1))o.Dispose();
-    }
-  }
-}
-function choose(f, arr){
-  const q=[];
-  for(let i=0, _1=arr.length-1;i<=_1;i++){
-    const m=f(arr[i]);
-    if(m==null){ }
-    else q.push(m.$0);
-  }
-  return q;
-}
-function create(size, value){
-  const r=new Array(size);
-  for(let i=0, _1=size-1;i<=_1;i++)r[i]=value;
-  return r;
-}
-function init(size, f){
-  if(size<0)FailWith("Negative size given.");
-  else null;
-  const r=new Array(size);
-  for(let i=0, _1=size-1;i<=_1;i++)r[i]=f(i);
-  return r;
-}
-function forall(f, x){
-  let a=true;
-  let i=0;
-  const l=length(x);
-  while(a&&i<l)
-    if(f(x[i]))i=i+1;
-    else a=false;
-  return a;
-}
 function LoadLocalTemplates(baseName){
   !LocalTemplatesLoaded()?(set_LocalTemplatesLoaded(true),LoadNestedTemplates(globalThis.document.body, "")):void 0;
   LoadedTemplates().set_Item(baseName, LoadedTemplateFile(""));
 }
 function LocalTemplatesLoaded(){
-  return _c_4.LocalTemplatesLoaded;
+  return _c_3.LocalTemplatesLoaded;
 }
 function set_LocalTemplatesLoaded(_1){
-  _c_4.LocalTemplatesLoaded=_1;
+  _c_3.LocalTemplatesLoaded=_1;
 }
 function LoadNestedTemplates(root, baseName){
   const loadedTpls=LoadedTemplateFile(baseName);
@@ -1019,7 +786,7 @@ function LoadNestedTemplates(root, baseName){
     prepareTemplate(head_1(rawTpls.Keys));
 }
 function LoadedTemplates(){
-  return _c_4.LoadedTemplates;
+  return _c_3.LoadedTemplates;
 }
 function LoadedTemplateFile(name){
   let o;
@@ -1250,7 +1017,148 @@ function PrepareSingleTemplate(baseName, name, el){
   };
 }
 function TextHoleRE(){
-  return _c_4.TextHoleRE;
+  return _c_3.TextHoleRE;
+}
+class Doc extends Object_1 {
+  docNode;
+  updates;
+  static RunById(id, tr){
+    const m=globalThis.document.getElementById(id);
+    if(Equals(m, null))FailWith("invalid id: "+id);
+    else Doc.Run(m, tr);
+  }
+  static TextNode(v){
+    return Doc.Mk(TextNodeDoc(globalThis.document.createTextNode(v)), Const());
+  }
+  static BindView(f, view){
+    return Doc.EmbedView(Map(f, view));
+  }
+  static Run(parent, doc){
+    LinkElement(parent, doc.docNode);
+    Doc.RunInPlace(false, parent, doc);
+  }
+  static Element(name, attr_1, children){
+    const a=Attr.Concat(attr_1);
+    const c=Doc.Concat(children);
+    return Elt.New(globalThis.document.createElement(name), a, c);
+  }
+  static Mk(node, updates){
+    return new Doc(node, updates);
+  }
+  static TextView(txt){
+    const node=CreateTextNode();
+    return Doc.Mk(TextDoc(node), Map((t) => {
+      UpdateTextNode(node, t);
+    }, txt));
+  }
+  static EmbedView(view){
+    const node=CreateEmbedNode();
+    return Doc.Mk(EmbedDoc(node), Map(() => { }, Bind((doc) => {
+      UpdateEmbedNode(node, doc.docNode);
+      return doc.updates;
+    }, view)));
+  }
+  static RunInPlace(childrenOnly, parent, doc){
+    const st=CreateRunState(parent, doc.docNode);
+    Sink(get_UseAnimations()||BatchUpdatesEnabled()?StartProcessor(PerformAnimatedUpdate(childrenOnly, st, doc.docNode)):() => {
+      PerformSyncUpdate(childrenOnly, st, doc.docNode);
+    }, doc.updates);
+  }
+  static Concat(xs){
+    return TreeReduce(Doc.Empty, Doc.Append, ofSeqNonCopying(xs));
+  }
+  static Append(a, b){
+    return Doc.Mk(AppendDoc(a.docNode, b.docNode), Map2Unit(a.updates, b.updates));
+  }
+  static get Empty(){
+    return Doc.Mk(null, Const());
+  }
+  constructor(docNode, updates){
+    super();
+    this.docNode=docNode;
+    this.updates=updates;
+  }
+}
+function Dynamic_1(view, set_1){
+  return Attr.A1(new DynamicAttrNode(view, set_1));
+}
+function Updates(dyn){
+  return MapTreeReduce((x) => x.NChanged, Const(), Map2Unit, dyn.DynNodes);
+}
+function AppendTree(a, b){
+  if(a===null)return b;
+  else if(b===null)return a;
+  else {
+    const x=Attr.A2(a, b);
+    SetFlags(x, Flags(a)|Flags(b));
+    return x;
+  }
+}
+function EmptyAttr(){
+  return _c_9.EmptyAttr;
+}
+function Insert(elem, tree){
+  const nodes=[];
+  const oar=[];
+  function loop(node){
+    while(true)
+      {
+        if(!(node===null)){
+          if(node!=null&&node.$==1)return nodes.push(node.$0);
+          else if(node!=null&&node.$==2){
+            const b=node.$1;
+            const a=node.$0;
+            loop(a);
+            node=b;
+          }
+          else return node!=null&&node.$==3?node.$0(elem):node!=null&&node.$==4?oar.push(node.$0):null;
+        }
+        else return null;
+      }
+  }
+  loop(tree);
+  const arr=nodes.slice(0);
+  let _1=New_4(elem, Flags(tree), arr, oar.length===0?null:Some((el) => {
+    iter_1((f) => {
+      f(el);
+    }, oar);
+  }));
+  return _1;
+}
+function HasExitAnim(attr_1){
+  const flag=2;
+  return(attr_1.DynFlags&flag)===flag;
+}
+function GetExitAnim(dyn){
+  return GetAnim(dyn, (_1, _2) => _1.NGetExitAnim(_2));
+}
+function HasEnterAnim(attr_1){
+  const flag=1;
+  return(attr_1.DynFlags&flag)===flag;
+}
+function GetEnterAnim(dyn){
+  return GetAnim(dyn, (_1, _2) => _1.NGetEnterAnim(_2));
+}
+function HasChangeAnim(attr_1){
+  const flag=4;
+  return(attr_1.DynFlags&flag)===flag;
+}
+function GetChangeAnim(dyn){
+  return GetAnim(dyn, (_1, _2) => _1.NGetChangeAnim(_2));
+}
+function SetFlags(a, f){
+  a.flags=f;
+}
+function Flags(a){
+  return a!==null&&a.hasOwnProperty("flags")?a.flags:0;
+}
+function GetAnim(dyn, f){
+  return Concat(map_1((n) => f(n, dyn.DynElem), dyn.DynNodes));
+}
+function Sync(elem, dyn){
+  iter((d) => {
+    d.NSync(elem);
+  }, dyn.DynNodes);
 }
 function ParseHTMLIntoFakeRoot(elem){
   const root=globalThis.document.createElement("div");
@@ -1282,19 +1190,19 @@ function ParseHTMLIntoFakeRoot(elem){
   }
 }
 function rhtml(){
-  return _c_8.rhtml;
+  return _c_7.rhtml;
 }
 function wrapMap(){
-  return _c_8.wrapMap;
+  return _c_7.wrapMap;
 }
 function defaultWrap(){
-  return _c_8.defaultWrap;
+  return _c_7.defaultWrap;
 }
 function rxhtmlTag(){
-  return _c_8.rxhtmlTag;
+  return _c_7.rxhtmlTag;
 }
 function rtagName(){
-  return _c_8.rtagName;
+  return _c_7.rtagName;
 }
 function IterSelector(el, selector, f){
   const l=el.querySelectorAll(selector);
@@ -1313,104 +1221,122 @@ function InsertAt(parent, pos, node){
 function RemoveNode(parent, el){
   if(el.parentNode===parent)parent.removeChild(el);
 }
-function get(arr, n){
-  checkBounds(arr, n);
-  return arr[n];
-}
-function length(arr){
-  return arr.dims===2?arr.length*arr.length:arr.length;
-}
-function checkBounds(arr, n){
-  if(n<0||n>=arr.length)FailWith("Index was outside the bounds of the array.");
-}
-function set(arr, n, x){
-  checkBounds(arr, n);
-  arr[n]=x;
-}
-function Dynamic_1(view, set_1){
-  return Attr.A1(new DynamicAttrNode(view, set_1));
-}
-function Updates(dyn){
-  return MapTreeReduce((x) => x.NChanged, Const(), Map2Unit, dyn.DynNodes);
-}
-function AppendTree(a, b){
-  if(a===null)return b;
-  else if(b===null)return a;
-  else {
-    const x=Attr.A2(a, b);
-    SetFlags(x, Flags(a)|Flags(b));
-    return x;
-  }
-}
-function EmptyAttr(){
-  return _c_6.EmptyAttr;
-}
-function Insert(elem, tree){
-  const nodes=[];
-  const oar=[];
-  function loop(node){
-    while(true)
-      {
-        if(!(node===null)){
-          if(node!=null&&node.$==1)return nodes.push(node.$0);
-          else if(node!=null&&node.$==2){
-            const b=node.$1;
-            const a=node.$0;
-            loop(a);
-            node=b;
-          }
-          else return node!=null&&node.$==3?node.$0(elem):node!=null&&node.$==4?oar.push(node.$0):null;
-        }
-        else return null;
-      }
-  }
-  loop(tree);
-  const arr=nodes.slice(0);
-  let _1=New_4(elem, Flags(tree), arr, oar.length===0?null:Some((el) => {
-    iter_1((f) => {
-      f(el);
-    }, oar);
-  }));
-  return _1;
-}
-function SetFlags(a, f){
-  a.flags=f;
-}
-function Flags(a){
-  return a!==null&&a.hasOwnProperty("flags")?a.flags:0;
-}
-function HasExitAnim(attr_1){
-  const flag=2;
-  return(attr_1.DynFlags&flag)===flag;
-}
-function GetExitAnim(dyn){
-  return GetAnim(dyn, (_1, _2) => _1.NGetExitAnim(_2));
-}
-function HasEnterAnim(attr_1){
-  const flag=1;
-  return(attr_1.DynFlags&flag)===flag;
-}
-function GetEnterAnim(dyn){
-  return GetAnim(dyn, (_1, _2) => _1.NGetEnterAnim(_2));
-}
-function HasChangeAnim(attr_1){
-  const flag=4;
-  return(attr_1.DynFlags&flag)===flag;
-}
-function GetChangeAnim(dyn){
-  return GetAnim(dyn, (_1, _2) => _1.NGetChangeAnim(_2));
-}
-function GetAnim(dyn, f){
-  return Concat(map_1((n) => f(n, dyn.DynElem), dyn.DynNodes));
-}
-function Sync(elem, dyn){
-  iter((d) => {
-    d.NSync(elem);
-  }, dyn.DynNodes);
-}
 let Progressive={$:1};
 let SocialSecurity={$:2};
 let FixedRate={$:0};
+function ofList(xs){
+  const q=[];
+  let l=xs;
+  while(!(l.$==0))
+    {
+      q.push(head(l));
+      l=tail(l);
+    }
+  return q;
+}
+function exists(f, x){
+  let e=false;
+  let i=0;
+  const l=length(x);
+  while(!e&&i<l)
+    if(f(x[i]))e=true;
+    else i=i+1;
+  return e;
+}
+function tryPick(f, arr){
+  let res=null;
+  let i=0;
+  while(i<arr.length&&res==null)
+    {
+      const m=f(arr[i]);
+      if(m!=null&&m.$==1)res=m;
+      i=i+1;
+    }
+  return res;
+}
+function tryFindIndex(f, arr){
+  let res=null;
+  let i=0;
+  while(i<arr.length&&res==null)
+    {
+      f(arr[i])?res=Some(i):void 0;
+      i=i+1;
+    }
+  return res;
+}
+function filter(f, arr){
+  const r=[];
+  for(let i=0, _1=arr.length-1;i<=_1;i++)if(f(arr[i]))r.push(arr[i]);
+  return r;
+}
+function map_1(f, arr){
+  const r=new Array(arr.length);
+  for(let i=0, _1=arr.length-1;i<=_1;i++)r[i]=f(arr[i]);
+  return r;
+}
+function iter(f, arr){
+  for(let i=0, _1=arr.length-1;i<=_1;i++)f(arr[i]);
+}
+function foldBack(f, arr, zero){
+  let acc=zero;
+  const len=arr.length;
+  for(let i=1, _1=len;i<=_1;i++)acc=f(arr[len-i], acc);
+  return acc;
+}
+function pick(f, arr){
+  const m=tryPick(f, arr);
+  return m==null?FailWith("KeyNotFoundException"):m.$0;
+}
+function ofSeq(xs){
+  if(xs instanceof Array)return xs.slice();
+  else if(xs instanceof FSharpList)return ofList(xs);
+  else {
+    const q=[];
+    const o=Get(xs);
+    try {
+      while(o.MoveNext())
+        q.push(o.Current);
+      return q;
+    }
+    finally {
+      const _1=o;
+      if(typeof _1=="object"&&isIDisposable(_1))o.Dispose();
+    }
+  }
+}
+function choose(f, arr){
+  const q=[];
+  for(let i=0, _1=arr.length-1;i<=_1;i++){
+    const m=f(arr[i]);
+    if(m==null){ }
+    else q.push(m.$0);
+  }
+  return q;
+}
+function concat(xs){
+  return Array.prototype.concat.apply([], ofSeq(xs));
+}
+function create(size, value){
+  const r=new Array(size);
+  for(let i=0, _1=size-1;i<=_1;i++)r[i]=value;
+  return r;
+}
+function init(size, f){
+  if(size<0)FailWith("Negative size given.");
+  else null;
+  const r=new Array(size);
+  for(let i=0, _1=size-1;i<=_1;i++)r[i]=f(i);
+  return r;
+}
+function forall(f, x){
+  let a=true;
+  let i=0;
+  const l=length(x);
+  while(a&&i<l)
+    if(f(x[i]))i=i+1;
+    else a=false;
+  return a;
+}
 let _c_1=Lazy((_i) => class $StartupCode_Domain {
   static {
     _c_1=_i(this);
@@ -1422,6 +1348,31 @@ let _c_1=Lazy((_i) => class $StartupCode_Domain {
     this.allCategories=ofArray([Housing, Food, Transport, Healthcare, Fun, Other]);
   }
 });
+class FSharpList {
+  static Empty=Create_1(FSharpList, {$:0});
+  static Cons(Head, Tail){
+    return Create_1(FSharpList, {
+      $:1, 
+      $0:Head, 
+      $1:Tail
+    });
+  }
+  GetEnumerator(){
+    return new T(this, null, (e) => {
+      const m=e.s;
+      if(m.$==0)return false;
+      else {
+        const xs=m.$1;
+        e.c=m.$0;
+        e.s=xs;
+        return true;
+      }
+    }, void 0);
+  }
+  $;
+  $0;
+  $1;
+}
 function Equals(a, b){
   if(a===b)return true;
   else {
@@ -1566,10 +1517,10 @@ function Int(){
   return counter();
 }
 function set_counter(_1){
-  _c_5.counter=_1;
+  _c_4.counter=_1;
 }
 function counter(){
-  return _c_5.counter;
+  return _c_4.counter;
 }
 function Ready(Item1, Item2){
   return{
@@ -1689,15 +1640,15 @@ class Dictionary extends Object_1 {
   Item(k){
     return this.get(k);
   }
-  GetEnumerator(){
-    return Get0(concat(GetFieldValues(this.data)));
-  }
   get(k){
     const d=this.data[this.hash(k)];
     return d==null?notPresent():pick((a) => {
       const a_1=KeyValue(a);
       return this.equals.apply(null, [a_1[0], k])?Some(a_1[1]):null;
     }, d);
+  }
+  GetEnumerator(){
+    return Get0(concat(GetFieldValues(this.data)));
   }
   constructor(i, _1, _2, _3){
     if(i=="New_5"){
@@ -1730,42 +1681,14 @@ class Dictionary extends Object_1 {
     }
   }
 }
-function New_2(k, ct){
-  return{k:k, ct:ct};
-}
-function No(Item){
-  return{$:1, $0:Item};
-}
-function Ok(Item){
-  return{$:0, $0:Item};
-}
-function Cc(Item){
-  return{$:2, $0:Item};
-}
-let _c_3=Lazy((_i) => class $StartupCode_Concurrency {
-  static {
-    _c_3=_i(this);
-  }
-  static GetCT;
-  static Zero;
-  static defCTS;
-  static scheduler;
-  static noneCT;
-  static {
-    this.noneCT=New_3(false, []);
-    this.scheduler=new Scheduler();
-    this.defCTS=[new CancellationTokenSource()];
-    this.Zero=Return();
-    this.GetCT=(c) => {
-      c.k(Ok(c.ct));
-    };
-  }
-});
-function New_3(IsCancellationRequested, Registrations){
-  return{c:IsCancellationRequested, r:Registrations};
-}
 function TextNodeDoc(Item){
   return{$:5, $0:Item};
+}
+function TextDoc(Item){
+  return{$:4, $0:Item};
+}
+function EmbedDoc(Item){
+  return{$:2, $0:Item};
 }
 function ElemDoc(Item){
   return{$:1, $0:Item};
@@ -1776,85 +1699,6 @@ function AppendDoc(Item1, Item2){
     $0:Item1, 
     $1:Item2
   };
-}
-function TextDoc(Item){
-  return{$:4, $0:Item};
-}
-function EmbedDoc(Item){
-  return{$:2, $0:Item};
-}
-class View { }
-class Elt extends Doc {
-  docNode_1;
-  updates_1;
-  elt;
-  rvUpdates;
-  static New(el, attr_1, children){
-    const node=CreateElemNode(el, attr_1, children.docNode);
-    const rvUpdates=Updates_1.Create(children.updates);
-    return new Elt(ElemDoc(node), Map2Unit(Updates(node.Attr), rvUpdates.v), el, rvUpdates);
-  }
-  constructor(docNode, updates, elt, rvUpdates){
-    super(docNode, updates);
-    this.docNode_1=docNode;
-    this.updates_1=updates;
-    this.elt=elt;
-    this.rvUpdates=rvUpdates;
-  }
-}
-function ofSeqNonCopying(xs){
-  if(xs instanceof Array)return xs;
-  else if(xs instanceof FSharpList)return ofList(xs);
-  else if(xs===null)return[];
-  else {
-    const q=[];
-    const o=Get(xs);
-    try {
-      while(o.MoveNext())
-        q.push(o.Current);
-      return q;
-    }
-    finally {
-      const _1=o;
-      if(typeof _1=="object"&&isIDisposable(_1))o.Dispose();
-    }
-  }
-}
-function TreeReduce(defaultValue, reduction, array){
-  const l=length(array);
-  function loop(off){
-    return(len) => {
-      let _1;
-      switch(len<=0?0:len===1?off>=0&&off<l?1:(_1=len,2):(_1=len,2)){
-        case 0:
-          return defaultValue;
-        case 1:
-          return get(array, off);
-        case 2:
-          const l2=len/2>>0;
-          return reduction((loop(off))(l2), (loop(off+l2))(len-l2));
-      }
-    };
-  }
-  return(loop(0))(l);
-}
-function MapTreeReduce(mapping, defaultValue, reduction, array){
-  const l=length(array);
-  function loop(off){
-    return(len) => {
-      let _1;
-      switch(len<=0?0:len===1?off>=0&&off<l?1:(_1=len,2):(_1=len,2)){
-        case 0:
-          return defaultValue;
-        case 1:
-          return mapping(get(array, off));
-        case 2:
-          const l2=len/2>>0;
-          return reduction((loop(off))(l2), (loop(off+l2))(len-l2));
-      }
-    };
-  }
-  return(loop(0))(l);
 }
 class DynamicAttrNode extends Object_1 {
   push;
@@ -1896,6 +1740,7 @@ let Transport={$:2};
 let Healthcare={$:3};
 let Fun={$:4};
 let Other={$:5};
+class View { }
 function TryParse(s, r){
   return TryParse_2(s, -2147483648, 2147483647, r);
 }
@@ -1929,9 +1774,9 @@ class Scheduler extends Object_1 {
     this.robin=[];
   }
 }
-let _c_4=Lazy((_i) => class $StartupCode_Templates {
+let _c_3=Lazy((_i) => class $StartupCode_Templates {
   static {
-    _c_4=_i(this);
+    _c_3=_i(this);
   }
   static RenderedFullDocTemplate;
   static TextHoleRE;
@@ -1946,6 +1791,20 @@ let _c_4=Lazy((_i) => class $StartupCode_Templates {
     this.RenderedFullDocTemplate=null;
   }
 });
+function get(arr, n){
+  checkBounds(arr, n);
+  return arr[n];
+}
+function length(arr){
+  return arr.dims===2?arr.length*arr.length:arr.length;
+}
+function checkBounds(arr, n){
+  if(n<0||n>=arr.length)FailWith("Index was outside the bounds of the array.");
+}
+function set(arr, n, x){
+  checkBounds(arr, n);
+  arr[n]=x;
+}
 class HashSet extends Object_1 {
   equals;
   hash;
@@ -2090,12 +1949,6 @@ function iter_1(p, s){
     if(typeof _1=="object"&&isIDisposable(_1))e.Dispose();
   }
 }
-function delay(f){
-  return{GetEnumerator:() => Get(f())};
-}
-function collect(f, s){
-  return concat_1(map_2(f, s));
-}
 function map_2(f, s){
   return{GetEnumerator:() => {
     const en=Get(s);
@@ -2103,6 +1956,29 @@ function map_2(f, s){
       en.Dispose();
     });
   }};
+}
+function delay(f){
+  return{GetEnumerator:() => Get(f())};
+}
+function collect(f, s){
+  return concat_1(map_2(f, s));
+}
+function max(s){
+  const e=Get(s);
+  try {
+    if(!e.MoveNext())seqEmpty();
+    let m=e.Current;
+    while(e.MoveNext())
+      {
+        const x=e.Current;
+        if(Compare(x, m)===1)m=x;
+      }
+    return m;
+  }
+  finally {
+    const _1=e;
+    if(typeof _1=="object"&&isIDisposable(_1))e.Dispose();
+  }
 }
 function concat_1(ss){
   return{GetEnumerator:() => {
@@ -2143,6 +2019,9 @@ function concat_1(ss){
 function init_1(n, f){
   return take(n, initInfinite(f));
 }
+function seqEmpty(){
+  return FailWith("The input sequence was empty.");
+}
 function take(n, s){
   n<0?nonNegative():void 0;
   return{GetEnumerator:() => {
@@ -2170,23 +2049,6 @@ function initInfinite(f){
 function forall_1(p, s){
   return!exists_1((x) =>!p(x), s);
 }
-function max(s){
-  const e=Get(s);
-  try {
-    if(!e.MoveNext())seqEmpty();
-    let m=e.Current;
-    while(e.MoveNext())
-      {
-        const x=e.Current;
-        if(Compare(x, m)===1)m=x;
-      }
-    return m;
-  }
-  finally {
-    const _1=e;
-    if(typeof _1=="object"&&isIDisposable(_1))e.Dispose();
-  }
-}
 function exists_1(p, s){
   const e=Get(s);
   try {
@@ -2200,17 +2062,9 @@ function exists_1(p, s){
     if(typeof _1=="object"&&isIDisposable(_1))e.Dispose();
   }
 }
-function seqEmpty(){
-  return FailWith("The input sequence was empty.");
-}
 class Exception extends Object_1 { }
 function LinkElement(el, children){
   InsertDoc(el, children, null);
-}
-function CreateElemNode(el, attr_1, children){
-  LinkElement(el, children);
-  const attr_2=Insert(el, attr_1);
-  return DocElemNode.New(attr_2, children, null, el, Int(), GetOptional(attr_2.OnAfterRender));
 }
 function CreateTextNode(){
   return{
@@ -2273,6 +2127,11 @@ function PerformSyncUpdate(childrenOnly, st, doc){
 function InsertNode(parent, node, pos){
   InsertAt(parent, pos, node);
   return node;
+}
+function CreateElemNode(el, attr_1, children){
+  LinkElement(el, children);
+  const attr_2=Insert(el, attr_1);
+  return DocElemNode.New(attr_2, children, null, el, Int(), GetOptional(attr_2.OnAfterRender));
 }
 function SyncElemNodesNextFrame(childrenOnly, st){
   if(BatchUpdatesEnabled()){
@@ -2411,95 +2270,32 @@ function DoSyncElement(el){
   let _2=m!=null&&m.$==1?m.$0[1]:null;
   ins(_1, _2);
 }
-class OperationCanceledException extends Error {
-  ct;
-  constructor(i, _1, _2, _3){
-    let ct;
-    if(i=="New"){
-      ct=_1;
-      i="New_1";
-      _1="The operation was canceled.";
-      _2=null;
-      _3=ct;
-    }
-    if(i=="New_1"){
-      const message=_1;
-      const inner=_2;
-      const ct_1=_3;
-      super(message);
-      this.inner=inner;
-      this.ct=ct_1;
-    }
-  }
-}
-class CancellationTokenSource extends Object_1 {
-  init;
-  c;
-  pending;
-  r;
-  constructor(){
-    super();
-    this.c=false;
-    this.pending=null;
-    this.r=[];
-    this.init=1;
-  }
-}
-class DocElemNode {
-  Attr;
-  Children;
-  Delimiters;
-  El;
-  ElKey;
-  Render;
-  Equals(o){
-    return this.ElKey===o.ElKey;
-  }
-  GetHashCode(){
-    return this.ElKey;
-  }
-  static New(Attr_1, Children_1, Delimiters, El, ElKey, Render){
-    const _1={
-      Attr:Attr_1, 
-      Children:Children_1, 
-      El:El, 
-      ElKey:ElKey
-    };
-    let _2=(SetOptional(_1, "Delimiters", Delimiters),SetOptional(_1, "Render", Render),_1);
-    return Create_1(DocElemNode, _2);
-  }
-}
-class Updates_1 {
-  c;
-  s;
-  v;
-  static Create(v){
-    let var_1;
-    var_1=null;
-    var_1=Updates_1.New(v, null, () => {
-      let c;
-      c=var_1.s;
-      return c===null?(c=Copy(var_1.c()),var_1.s=c,WhenObsoleteRun(c, () => {
-        var_1.s=null;
-      }),c):c;
-    });
-    return var_1;
-  }
-  static New(Current, Snap, VarView){
-    return Create_1(Updates_1, {
-      c:Current, 
-      s:Snap, 
-      v:VarView
-    });
-  }
-}
-let _c_5=Lazy((_i) => class $StartupCode_Abbrev {
+let _c_4=Lazy((_i) => class $StartupCode_Abbrev {
   static {
-    _c_5=_i(this);
+    _c_4=_i(this);
   }
   static counter;
   static {
     this.counter=0;
+  }
+});
+let _c_5=Lazy((_i) => class $StartupCode_Concurrency {
+  static {
+    _c_5=_i(this);
+  }
+  static GetCT;
+  static Zero;
+  static defCTS;
+  static scheduler;
+  static noneCT;
+  static {
+    this.noneCT=New_2(false, []);
+    this.scheduler=new Scheduler();
+    this.defCTS=[new CancellationTokenSource()];
+    this.Zero=Return();
+    this.GetCT=(c) => {
+      c.k(Ok(c.ct));
+    };
   }
 });
 class TemplateHole extends Object_1 { }
@@ -2711,6 +2507,30 @@ class KeyCollection extends Object_1 {
     this.d=d;
   }
 }
+class DocElemNode {
+  Attr;
+  Children;
+  Delimiters;
+  El;
+  ElKey;
+  Render;
+  Equals(o){
+    return this.ElKey===o.ElKey;
+  }
+  GetHashCode(){
+    return this.ElKey;
+  }
+  static New(Attr_1, Children_1, Delimiters, El, ElKey, Render){
+    const _1={
+      Attr:Attr_1, 
+      Children:Children_1, 
+      El:El, 
+      ElKey:ElKey
+    };
+    let _2=(SetOptional(_1, "Delimiters", Delimiters),SetOptional(_1, "Render", Render),_1);
+    return Create_1(DocElemNode, _2);
+  }
+}
 function get_UseAnimations(){
   return UseAnimations();
 }
@@ -2755,7 +2575,7 @@ function get_Empty(){
   return Anim(Empty());
 }
 function BatchUpdatesEnabled(){
-  return _c_7.BatchUpdatesEnabled;
+  return _c_6.BatchUpdatesEnabled;
 }
 function StartProcessor(procAsync){
   const st=[0];
@@ -2774,18 +2594,378 @@ function StartProcessor(procAsync){
     else Equals(m, 1)?st[0]=2:void 0;
   };
 }
-function New_4(DynElem, DynFlags, DynNodes, OnAfterRender){
+class Elt extends Doc {
+  docNode_1;
+  updates_1;
+  elt;
+  rvUpdates;
+  static New(el, attr_1, children){
+    const node=CreateElemNode(el, attr_1, children.docNode);
+    const rvUpdates=Updates_1.Create(children.updates);
+    return new Elt(ElemDoc(node), Map2Unit(Updates(node.Attr), rvUpdates.v), el, rvUpdates);
+  }
+  constructor(docNode, updates, elt, rvUpdates){
+    super(docNode, updates);
+    this.docNode_1=docNode;
+    this.updates_1=updates;
+    this.elt=elt;
+    this.rvUpdates=rvUpdates;
+  }
+}
+function ofSeqNonCopying(xs){
+  if(xs instanceof Array)return xs;
+  else if(xs instanceof FSharpList)return ofList(xs);
+  else if(xs===null)return[];
+  else {
+    const q=[];
+    const o=Get(xs);
+    try {
+      while(o.MoveNext())
+        q.push(o.Current);
+      return q;
+    }
+    finally {
+      const _1=o;
+      if(typeof _1=="object"&&isIDisposable(_1))o.Dispose();
+    }
+  }
+}
+function TreeReduce(defaultValue, reduction, array){
+  const l=length(array);
+  function loop(off){
+    return(len) => {
+      let _1;
+      switch(len<=0?0:len===1?off>=0&&off<l?1:(_1=len,2):(_1=len,2)){
+        case 0:
+          return defaultValue;
+        case 1:
+          return get(array, off);
+        case 2:
+          const l2=len/2>>0;
+          return reduction((loop(off))(l2), (loop(off+l2))(len-l2));
+      }
+    };
+  }
+  return(loop(0))(l);
+}
+function MapTreeReduce(mapping, defaultValue, reduction, array){
+  const l=length(array);
+  function loop(off){
+    return(len) => {
+      let _1;
+      switch(len<=0?0:len===1?off>=0&&off<l?1:(_1=len,2):(_1=len,2)){
+        case 0:
+          return defaultValue;
+        case 1:
+          return mapping(get(array, off));
+        case 2:
+          const l2=len/2>>0;
+          return reduction((loop(off))(l2), (loop(off+l2))(len-l2));
+      }
+    };
+  }
+  return(loop(0))(l);
+}
+function New_2(IsCancellationRequested, Registrations){
+  return{c:IsCancellationRequested, r:Registrations};
+}
+class CancellationTokenSource extends Object_1 {
+  init;
+  c;
+  pending;
+  r;
+  constructor(){
+    super();
+    this.c=false;
+    this.pending=null;
+    this.r=[];
+    this.init=1;
+  }
+}
+function New_3(k, ct){
+  return{k:k, ct:ct};
+}
+function Ok(Item){
+  return{$:0, $0:Item};
+}
+function No(Item){
+  return{$:1, $0:Item};
+}
+function Cc(Item){
+  return{$:2, $0:Item};
+}
+function concat_2(separator, strings){
+  return ofSeq(strings).join(separator);
+}
+function SplitChars(s, sep, opts){
+  return Split(s, new RegExp("["+RegexEscape(sep.join(""))+"]"), opts);
+}
+function StartsWith(t, s){
+  return t.substring(0, s.length)==s;
+}
+function Split(s, pat, opts){
+  return opts===1?filter((x) => x!=="", SplitWith(s, pat)):SplitWith(s, pat);
+}
+function RegexEscape(s){
+  return s.replace(new RegExp("[-\\/\\\\^$*+?.()|[\\]{}]", "g"), "\\$&");
+}
+function SplitWith(str, pat){
+  return str.split(pat);
+}
+function forall_2(f, s){
+  return forall_1(f, protect(s));
+}
+function protect(s){
+  return s==null?"":s;
+}
+function New_4(DynElem, DynFlags, DynNodes, OnAfterRender_1){
   const _1={
     DynElem:DynElem, 
     DynFlags:DynFlags, 
     DynNodes:DynNodes
   };
-  SetOptional(_1, "OnAfterRender", OnAfterRender);
+  SetOptional(_1, "OnAfterRender", OnAfterRender_1);
   return _1;
 }
-let _c_6=Lazy((_i) => class Client {
+function New_5(PreviousNodes, Top){
+  return{PreviousNodes:PreviousNodes, Top:Top};
+}
+function get_Empty_1(){
+  return NodeSet(new HashSet("New_3"));
+}
+function FindAll(doc){
+  const q=[];
+  function recF(recI, _1){
+    while(true)
+      switch(recI){
+        case 0:
+          if(_1!=null&&_1.$==0){
+            const b=_1.$1;
+            const a=_1.$0;
+            recF(0, a);
+            _1=b;
+          }
+          else if(_1!=null&&_1.$==1){
+            const el=_1.$0;
+            _1=el;
+            recI=1;
+          }
+          else if(_1!=null&&_1.$==2){
+            const em=_1.$0;
+            _1=em.Current;
+          }
+          else if(_1!=null&&_1.$==6){
+            const x=_1.$0.Holes;
+            return(((a_1) =>(a_2) => {
+              iter(a_1, a_2);
+            })(loopEN))(x);
+          }
+          else return null;
+          break;
+        case 1:
+          q.push(_1);
+          _1=_1.Children;
+          recI=0;
+          break;
+      }
+  }
+  function loop(node){
+    return recF(0, node);
+  }
+  function loopEN(el){
+    return recF(1, el);
+  }
+  loop(doc);
+  return NodeSet(new HashSet("New_2", q));
+}
+function NodeSet(Item){
+  return{$:0, $0:Item};
+}
+function Filter(f, a){
+  return NodeSet(Filter_1(f, a.$0));
+}
+function Except(a, a_1){
+  return NodeSet(Except_1(a.$0, a_1.$0));
+}
+function ToArray(a){
+  return ToArray_2(a.$0);
+}
+function Intersect(a, a_1){
+  return NodeSet(Intersect_1(a.$0, a_1.$0));
+}
+function UseAnimations(){
+  return _c_8.UseAnimations;
+}
+function Actions(a){
+  return ConcatActions(choose((a_1) => a_1.$==1?Some(a_1.$0):null, ToArray_1(a.$0)));
+}
+function Finalize(a){
+  iter((a_1) => {
+    if(a_1.$==0)a_1.$0();
+  }, ToArray_1(a.$0));
+}
+function ConcatActions(xs){
+  const xs_1=ofSeqNonCopying(xs);
+  const m=length(xs_1);
+  if(m===0)return Const_1();
+  else if(m===1)return get(xs_1, 0);
+  else {
+    const dur=max(map_2((anim) => anim.Duration, xs_1));
+    const xs_2=map_1((x) => Prolong(dur, x), xs_1);
+    return Def(dur, (t) => {
+      iter((anim) => {
+        anim.Compute(t);
+      }, xs_2);
+    });
+  }
+}
+function List(a){
+  return a.$0;
+}
+function Const_1(v){
+  return Def(0, () => v);
+}
+function Def(d, f){
+  return{Compute:f, Duration:d};
+}
+function Prolong(nextDuration, anim){
+  const comp=anim.Compute;
+  const dur=anim.Duration;
+  const last=Create(() => anim.Compute(anim.Duration));
+  return{Compute:(t) => t>=dur?last.f():comp(t), Duration:nextDuration};
+}
+let _c_6=Lazy((_i) => class Proxy {
   static {
     _c_6=_i(this);
+  }
+  static BatchUpdatesEnabled;
+  static {
+    this.BatchUpdatesEnabled=true;
+  }
+});
+class Updates_1 {
+  c;
+  s;
+  v;
+  static Create(v){
+    let var_1;
+    var_1=null;
+    var_1=Updates_1.New(v, null, () => {
+      let c;
+      c=var_1.s;
+      return c===null?(c=Copy(var_1.c()),var_1.s=c,WhenObsoleteRun(c, () => {
+        var_1.s=null;
+      }),c):c;
+    });
+    return var_1;
+  }
+  static New(Current, Snap, VarView){
+    return Create_1(Updates_1, {
+      c:Current, 
+      s:Snap, 
+      v:VarView
+    });
+  }
+}
+function Clear(a){
+  a.splice(0, length(a));
+}
+let _c_7=Lazy((_i) => class $StartupCode_DomUtility {
+  static {
+    _c_7=_i(this);
+  }
+  static defaultWrap;
+  static wrapMap;
+  static rhtml;
+  static rtagName;
+  static rxhtmlTag;
+  static {
+    this.rxhtmlTag=new RegExp("<(?!area|br|col|embed|hr|img|input|link|meta|param)(([\\w:]+)[^>]*)\\/>", "gi");
+    this.rtagName=new RegExp("<([\\w:]+)");
+    this.rhtml=new RegExp("<|&#?\\w+;");
+    const table=[1, "<table>", "</table>"];
+    let _1=Object.fromEntries([["option", [1, "<select multiple='multiple'>", "</select>"]], ["legend", [1, "<fieldset>", "</fieldset>"]], ["area", [1, "<map>", "</map>"]], ["param", [1, "<object>", "</object>"]], ["thead", table], ["tbody", table], ["tfoot", table], ["tr", [2, "<table><tbody>", "</tbody></table>"]], ["col", [2, "<table><colgroup>", "</colgoup></table>"]], ["td", [3, "<table><tbody><tr>", "</tr></tbody></table>"]]]);
+    this.wrapMap=_1;
+    this.defaultWrap=[0, "", ""];
+  }
+});
+class T extends Object_1 {
+  s;
+  c;
+  n;
+  d;
+  e;
+  MoveNext(){
+    const m=this.n(this);
+    this.e=m?1:2;
+    return m;
+  }
+  get Current(){
+    return this.e===1?this.c:this.e===0?FailWith("Enumeration has not started. Call MoveNext."):FailWith("Enumeration already finished.");
+  }
+  Dispose(){
+    if(this.d)this.d(this);
+  }
+  constructor(s, c, n, d){
+    super();
+    this.s=s;
+    this.c=c;
+    this.n=n;
+    this.d=d;
+    this.e=0;
+  }
+}
+let _c_8=Lazy((_i) => class $StartupCode_Animation {
+  static {
+    _c_8=_i(this);
+  }
+  static UseAnimations;
+  static CubicInOut;
+  static {
+    this.CubicInOut=Easing.Custom((t) => {
+      const t2=t*t;
+      return 3*t2-2*(t2*t);
+    });
+    this.UseAnimations=true;
+  }
+});
+function Append_1(x, y){
+  return x.$==0?y:y.$==0?x:{
+    $:2, 
+    $0:x, 
+    $1:y
+  };
+}
+function ToArray_1(xs){
+  const out=[];
+  function loop(xs_1){
+    while(true)
+      {
+        if(xs_1.$==1)return out.push(xs_1.$0);
+        else if(xs_1.$==2){
+          const y=xs_1.$1;
+          const x=xs_1.$0;
+          loop(x);
+          xs_1=y;
+        }
+        else return xs_1.$==3?iter((v) => {
+          out.push(v);
+        }, xs_1.$0):null;
+      }
+  }
+  loop(xs);
+  return out.slice(0);
+}
+function Concat_1(xs){
+  const x=ofSeqNonCopying(xs);
+  return TreeReduce(Empty(), Append_1, x);
+}
+function Empty(){
+  return _c_10.Empty;
+}
+let _c_9=Lazy((_i) => class Client {
+  static {
+    _c_9=_i(this);
   }
   static FloatApplyChecked;
   static FloatGetChecked;
@@ -2933,373 +3113,26 @@ let _c_6=Lazy((_i) => class Client {
     this.FloatApplyChecked=(v) => ApplyValue(g_7, s_7, v);
   }
 });
-class T extends Object_1 {
-  s;
-  c;
-  n;
-  d;
-  e;
-  Dispose(){
-    if(this.d)this.d(this);
+class OperationCanceledException extends Error {
+  ct;
+  constructor(i, _1, _2, _3){
+    let ct;
+    if(i=="New"){
+      ct=_1;
+      i="New_1";
+      _1="The operation was canceled.";
+      _2=null;
+      _3=ct;
+    }
+    if(i=="New_1"){
+      const message=_1;
+      const inner=_2;
+      const ct_1=_3;
+      super(message);
+      this.inner=inner;
+      this.ct=ct_1;
+    }
   }
-  MoveNext(){
-    const m=this.n(this);
-    this.e=m?1:2;
-    return m;
-  }
-  get Current(){
-    return this.e===1?this.c:this.e===0?FailWith("Enumeration has not started. Call MoveNext."):FailWith("Enumeration already finished.");
-  }
-  constructor(s, c, n, d){
-    super();
-    this.s=s;
-    this.c=c;
-    this.n=n;
-    this.d=d;
-    this.e=0;
-  }
-}
-function concat_2(separator, strings){
-  return ofSeq(strings).join(separator);
-}
-function SplitChars(s, sep, opts){
-  return Split(s, new RegExp("["+RegexEscape(sep.join(""))+"]"), opts);
-}
-function StartsWith(t, s){
-  return t.substring(0, s.length)==s;
-}
-function Split(s, pat, opts){
-  return opts===1?filter((x) => x!=="", SplitWith(s, pat)):SplitWith(s, pat);
-}
-function RegexEscape(s){
-  return s.replace(new RegExp("[-\\/\\\\^$*+?.()|[\\]{}]", "g"), "\\$&");
-}
-function forall_2(f, s){
-  return forall_1(f, protect(s));
-}
-function SplitWith(str, pat){
-  return str.split(pat);
-}
-function protect(s){
-  return s==null?"":s;
-}
-function New_5(PreviousNodes, Top){
-  return{PreviousNodes:PreviousNodes, Top:Top};
-}
-function get_Empty_1(){
-  return NodeSet(new HashSet("New_3"));
-}
-function FindAll(doc){
-  const q=[];
-  function recF(recI, _1){
-    while(true)
-      switch(recI){
-        case 0:
-          if(_1!=null&&_1.$==0){
-            const b=_1.$1;
-            const a=_1.$0;
-            recF(0, a);
-            _1=b;
-          }
-          else if(_1!=null&&_1.$==1){
-            const el=_1.$0;
-            _1=el;
-            recI=1;
-          }
-          else if(_1!=null&&_1.$==2){
-            const em=_1.$0;
-            _1=em.Current;
-          }
-          else if(_1!=null&&_1.$==6){
-            const x=_1.$0.Holes;
-            return(((a_1) =>(a_2) => {
-              iter(a_1, a_2);
-            })(loopEN))(x);
-          }
-          else return null;
-          break;
-        case 1:
-          q.push(_1);
-          _1=_1.Children;
-          recI=0;
-          break;
-      }
-  }
-  function loop(node){
-    return recF(0, node);
-  }
-  function loopEN(el){
-    return recF(1, el);
-  }
-  loop(doc);
-  return NodeSet(new HashSet("New_2", q));
-}
-function NodeSet(Item){
-  return{$:0, $0:Item};
-}
-function Filter(f, a){
-  return NodeSet(Filter_1(f, a.$0));
-}
-function Except(a, a_1){
-  return NodeSet(Except_1(a.$0, a_1.$0));
-}
-function ToArray(a){
-  return ToArray_2(a.$0);
-}
-function Intersect(a, a_1){
-  return NodeSet(Intersect_1(a.$0, a_1.$0));
-}
-function UseAnimations(){
-  return _c_9.UseAnimations;
-}
-function Actions(a){
-  return ConcatActions(choose((a_1) => a_1.$==1?Some(a_1.$0):null, ToArray_1(a.$0)));
-}
-function Finalize(a){
-  iter((a_1) => {
-    if(a_1.$==0)a_1.$0();
-  }, ToArray_1(a.$0));
-}
-function ConcatActions(xs){
-  const xs_1=ofSeqNonCopying(xs);
-  const m=length(xs_1);
-  if(m===0)return Const_1();
-  else if(m===1)return get(xs_1, 0);
-  else {
-    const dur=max(map_2((anim) => anim.Duration, xs_1));
-    const xs_2=map_1((x) => Prolong(dur, x), xs_1);
-    return Def(dur, (t) => {
-      iter((anim) => {
-        anim.Compute(t);
-      }, xs_2);
-    });
-  }
-}
-function List(a){
-  return a.$0;
-}
-function Const_1(v){
-  return Def(0, () => v);
-}
-function Def(d, f){
-  return{Compute:f, Duration:d};
-}
-function Prolong(nextDuration, anim){
-  const comp=anim.Compute;
-  const dur=anim.Duration;
-  const last=Create(() => anim.Compute(anim.Duration));
-  return{Compute:(t) => t>=dur?last.f():comp(t), Duration:nextDuration};
-}
-let _c_7=Lazy((_i) => class Proxy {
-  static {
-    _c_7=_i(this);
-  }
-  static BatchUpdatesEnabled;
-  static {
-    this.BatchUpdatesEnabled=true;
-  }
-});
-function ApplyValue(get_1, set_1, var_1){
-  let expectedValue;
-  expectedValue=null;
-  return[(el) => {
-    const onChange=() => {
-      var_1.UpdateMaybe((v) => {
-        let _1;
-        expectedValue=get_1(el);
-        return expectedValue!=null&&expectedValue.$==1&&(!Equals(expectedValue.$0, v)&&(_1=[expectedValue, expectedValue.$0],true))?_1[0]:null;
-      });
-    };
-    el.addEventListener("change", onChange);
-    el.addEventListener("input", onChange);
-    el.addEventListener("keypress", onChange);
-  }, (x) => {
-    const _1=set_1(x);
-    return(_2) => _2==null?null:_1(_2.$0);
-  }, Map((v) => {
-    let _1;
-    return expectedValue!=null&&expectedValue.$==1&&(Equals(expectedValue.$0, v)&&(_1=expectedValue.$0,true))?null:Some(v);
-  }, var_1.View)];
-}
-function StringSet(){
-  return _c_6.StringSet;
-}
-function StringGet(){
-  return _c_6.StringGet;
-}
-function StringListSet(){
-  return _c_6.StringListSet;
-}
-function StringListGet(){
-  return _c_6.StringListGet;
-}
-function DateTimeSetUnchecked(){
-  return _c_6.DateTimeSetUnchecked;
-}
-function DateTimeGetUnchecked(){
-  return _c_6.DateTimeGetUnchecked;
-}
-function FileApplyValue(get_1, set_1, var_1){
-  let expectedValue;
-  expectedValue=null;
-  return[(el) => {
-    el.addEventListener("change", () => {
-      var_1.UpdateMaybe((v) => {
-        let _1;
-        expectedValue=get_1(el);
-        return expectedValue!=null&&expectedValue.$==1&&(expectedValue.$0!==v&&(_1=[expectedValue, expectedValue.$0],true))?_1[0]:null;
-      });
-    });
-  }, (x) => {
-    const _1=set_1(x);
-    return(_2) => _2==null?null:_1(_2.$0);
-  }, Map((v) => {
-    let _1;
-    return expectedValue!=null&&expectedValue.$==1&&(Equals(expectedValue.$0, v)&&(_1=expectedValue.$0,true))?null:Some(v);
-  }, var_1.View)];
-}
-function FileSetUnchecked(){
-  return _c_6.FileSetUnchecked;
-}
-function FileGetUnchecked(){
-  return _c_6.FileGetUnchecked;
-}
-function IntSetUnchecked(){
-  return _c_6.IntSetUnchecked;
-}
-function IntGetUnchecked(){
-  return _c_6.IntGetUnchecked;
-}
-function IntSetChecked(){
-  return _c_6.IntSetChecked;
-}
-function IntGetChecked(){
-  return _c_6.IntGetChecked;
-}
-function FloatSetUnchecked(){
-  return _c_6.FloatSetUnchecked;
-}
-function FloatGetUnchecked(){
-  return _c_6.FloatGetUnchecked;
-}
-function FloatSetChecked(){
-  return _c_6.FloatSetChecked;
-}
-function FloatGetChecked(){
-  return _c_6.FloatGetChecked;
-}
-function isBlank(s){
-  return forall_2(IsWhiteSpace, s);
-}
-class CheckedInput {
-  get Input(){
-    return this.$==1?this.$0:this.$==2?this.$0:this.$1;
-  }
-  static Blank(inputText){
-    return Create_1(CheckedInput, {$:2, $0:inputText});
-  }
-  static Invalid(inputText){
-    return Create_1(CheckedInput, {$:1, $0:inputText});
-  }
-  static Valid(value, inputText){
-    return Create_1(CheckedInput, {
-      $:0, 
-      $0:value, 
-      $1:inputText
-    });
-  }
-  $;
-  $0;
-  $1;
-}
-function Clear(a){
-  a.splice(0, length(a));
-}
-let _c_8=Lazy((_i) => class $StartupCode_DomUtility {
-  static {
-    _c_8=_i(this);
-  }
-  static defaultWrap;
-  static wrapMap;
-  static rhtml;
-  static rtagName;
-  static rxhtmlTag;
-  static {
-    this.rxhtmlTag=new RegExp("<(?!area|br|col|embed|hr|img|input|link|meta|param)(([\\w:]+)[^>]*)\\/>", "gi");
-    this.rtagName=new RegExp("<([\\w:]+)");
-    this.rhtml=new RegExp("<|&#?\\w+;");
-    const table=[1, "<table>", "</table>"];
-    let _1=Object.fromEntries([["option", [1, "<select multiple='multiple'>", "</select>"]], ["legend", [1, "<fieldset>", "</fieldset>"]], ["area", [1, "<map>", "</map>"]], ["param", [1, "<object>", "</object>"]], ["thead", table], ["tbody", table], ["tfoot", table], ["tr", [2, "<table><tbody>", "</tbody></table>"]], ["col", [2, "<table><colgroup>", "</colgoup></table>"]], ["td", [3, "<table><tbody><tr>", "</tr></tbody></table>"]]]);
-    this.wrapMap=_1;
-    this.defaultWrap=[0, "", ""];
-  }
-});
-let _c_9=Lazy((_i) => class $StartupCode_Animation {
-  static {
-    _c_9=_i(this);
-  }
-  static UseAnimations;
-  static CubicInOut;
-  static {
-    this.CubicInOut=Easing.Custom((t) => {
-      const t2=t*t;
-      return 3*t2-2*(t2*t);
-    });
-    this.UseAnimations=true;
-  }
-});
-function Append_1(x, y){
-  return x.$==0?y:y.$==0?x:{
-    $:2, 
-    $0:x, 
-    $1:y
-  };
-}
-function ToArray_1(xs){
-  const out=[];
-  function loop(xs_1){
-    while(true)
-      {
-        if(xs_1.$==1)return out.push(xs_1.$0);
-        else if(xs_1.$==2){
-          const y=xs_1.$1;
-          const x=xs_1.$0;
-          loop(x);
-          xs_1=y;
-        }
-        else return xs_1.$==3?iter((v) => {
-          out.push(v);
-        }, xs_1.$0):null;
-      }
-  }
-  loop(xs);
-  return out.slice(0);
-}
-function Concat_1(xs){
-  const x=ofSeqNonCopying(xs);
-  return TreeReduce(Empty(), Append_1, x);
-}
-function Empty(){
-  return _c_10.Empty;
-}
-function IsWhiteSpace(c){
-  return c.match(new RegExp("\\s"))!==null;
-}
-function TryParse_1(s){
-  const d=Date.parse(s);
-  return isNaN(d)?null:Some(d);
-}
-function TryParse_2(s, min, max_1, r){
-  const x=+s;
-  const ok=x===x-x%1&&x>=min&&x<=max_1;
-  if(ok)r.set(x);
-  return ok;
-}
-function concat_3(o){
-  let r=[];
-  let k;
-  for(var k_1 in o)r.push.apply(r, o[k_1]);
-  return r;
 }
 class KeyNotFoundException extends Error {
   constructor(i, _1){
@@ -3340,6 +3173,125 @@ function Intersect_1(a, b){
   const set_1=new HashSet("New_2", ToArray_2(a));
   set_1.IntersectWith(ToArray_2(b));
   return set_1;
+}
+function ApplyValue(get_1, set_1, var_1){
+  let expectedValue;
+  expectedValue=null;
+  return[(el) => {
+    const onChange=() => {
+      var_1.UpdateMaybe((v) => {
+        let _1;
+        expectedValue=get_1(el);
+        return expectedValue!=null&&expectedValue.$==1&&(!Equals(expectedValue.$0, v)&&(_1=[expectedValue, expectedValue.$0],true))?_1[0]:null;
+      });
+    };
+    el.addEventListener("change", onChange);
+    el.addEventListener("input", onChange);
+    el.addEventListener("keypress", onChange);
+  }, (x) => {
+    const _1=set_1(x);
+    return(_2) => _2==null?null:_1(_2.$0);
+  }, Map((v) => {
+    let _1;
+    return expectedValue!=null&&expectedValue.$==1&&(Equals(expectedValue.$0, v)&&(_1=expectedValue.$0,true))?null:Some(v);
+  }, var_1.View)];
+}
+function StringSet(){
+  return _c_9.StringSet;
+}
+function StringGet(){
+  return _c_9.StringGet;
+}
+function StringListSet(){
+  return _c_9.StringListSet;
+}
+function StringListGet(){
+  return _c_9.StringListGet;
+}
+function DateTimeSetUnchecked(){
+  return _c_9.DateTimeSetUnchecked;
+}
+function DateTimeGetUnchecked(){
+  return _c_9.DateTimeGetUnchecked;
+}
+function FileApplyValue(get_1, set_1, var_1){
+  let expectedValue;
+  expectedValue=null;
+  return[(el) => {
+    el.addEventListener("change", () => {
+      var_1.UpdateMaybe((v) => {
+        let _1;
+        expectedValue=get_1(el);
+        return expectedValue!=null&&expectedValue.$==1&&(expectedValue.$0!==v&&(_1=[expectedValue, expectedValue.$0],true))?_1[0]:null;
+      });
+    });
+  }, (x) => {
+    const _1=set_1(x);
+    return(_2) => _2==null?null:_1(_2.$0);
+  }, Map((v) => {
+    let _1;
+    return expectedValue!=null&&expectedValue.$==1&&(Equals(expectedValue.$0, v)&&(_1=expectedValue.$0,true))?null:Some(v);
+  }, var_1.View)];
+}
+function FileSetUnchecked(){
+  return _c_9.FileSetUnchecked;
+}
+function FileGetUnchecked(){
+  return _c_9.FileGetUnchecked;
+}
+function IntSetUnchecked(){
+  return _c_9.IntSetUnchecked;
+}
+function IntGetUnchecked(){
+  return _c_9.IntGetUnchecked;
+}
+function IntSetChecked(){
+  return _c_9.IntSetChecked;
+}
+function IntGetChecked(){
+  return _c_9.IntGetChecked;
+}
+function FloatSetUnchecked(){
+  return _c_9.FloatSetUnchecked;
+}
+function FloatGetUnchecked(){
+  return _c_9.FloatGetUnchecked;
+}
+function FloatSetChecked(){
+  return _c_9.FloatSetChecked;
+}
+function FloatGetChecked(){
+  return _c_9.FloatGetChecked;
+}
+function isBlank(s){
+  return forall_2(IsWhiteSpace, s);
+}
+class CheckedInput {
+  get Input(){
+    return this.$==1?this.$0:this.$==2?this.$0:this.$1;
+  }
+  static Blank(inputText){
+    return Create_1(CheckedInput, {$:2, $0:inputText});
+  }
+  static Invalid(inputText){
+    return Create_1(CheckedInput, {$:1, $0:inputText});
+  }
+  static Valid(value, inputText){
+    return Create_1(CheckedInput, {
+      $:0, 
+      $0:value, 
+      $1:inputText
+    });
+  }
+  $;
+  $0;
+  $1;
+}
+function concat_3(o){
+  let r=[];
+  let k;
+  for(var k_1 in o)r.push.apply(r, o[k_1]);
+  return r;
 }
 function Children(elem, delims){
   let n;
@@ -3404,6 +3356,19 @@ function DocChildren(node){
 }
 function DomNodes(Item){
   return{$:0, $0:Item};
+}
+function IsWhiteSpace(c){
+  return c.match(new RegExp("\\s"))!==null;
+}
+function TryParse_1(s){
+  const d=Date.parse(s);
+  return isNaN(d)?null:Some(d);
+}
+function TryParse_2(s, min, max_1, r){
+  const x=+s;
+  const ok=x===x-x%1&&x>=min&&x<=max_1;
+  if(ok)r.set(x);
+  return ok;
 }
 function Create(f){
   return New_6(false, f, forceLazy);
