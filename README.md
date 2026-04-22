@@ -12,12 +12,10 @@ A reactive, client-side SPA designed to solve the real-world problem of budgetin
 
 ## 📸 Screenshots
 
-| Desktop Dashboard | Mobile View |
-|:---:|:---:|
+|                    Desktop Dashboard                    |                      Mobile View                       |
+|:-------------------------------------------------------:|:------------------------------------------------------:|
 | ![Desktop Placeholder](https://i.imgur.com/HsWGJZH.png) | ![Mobile Placeholder](https://i.imgur.com/LbEDmG9.png) |
-| *Reactive sliders and real-time Chart.js updates* | *Responsive Bulma-based layout* |
-
-> *Note: Add actual screenshots here after the final build.*
+|    *Reactive sliders and real-time Chart.js updates*    |            *Responsive Bulma-based layout*             |
 
 ---
 
@@ -42,13 +40,13 @@ This project serves as a demonstration of idiomatic F# and the WebSharper ecosys
 
 ## 📂 Architecture Map
 
-| File | Responsibility |
-|:---|:---|
-| `Domain.fs` | **Core Logic:** Units of Measure, Tax DUs, Budget Records, and pure math. |
+| File         | Responsibility                                                               |
+|:-------------|:-----------------------------------------------------------------------------|
+| `Domain.fs`  | **Core Logic:** Units of Measure, Tax DUs, Budget Records, and pure math.    |
 | `Storage.fs` | **Persistence:** Serialization logic for saving/loading from `localStorage`. |
-| `Charts.fs` | **JS Interop:** Integration with Chart.js 4 for the expense breakdown. |
-| `Client.fs` | **UI & State:** Reactive variables, slider components, and SPA entry point. |
-| `Startup.fs` | **ASP.NET Core:** Standard WebSharper host configuration. |
+| `Charts.fs`  | **JS Interop:** Integration with Chart.js 4 for the expense breakdown.       |
+| `Client.fs`  | **UI & State:** Reactive variables, slider components, and SPA entry point.  |
+| `Startup.fs` | **ASP.NET Core:** Standard WebSharper host configuration.                    |
 
 ---
 
