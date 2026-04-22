@@ -12,21 +12,18 @@ open Charts
 [<JavaScript>]
 module Client =
 
-    // ── Formatting helpers ──────────────────────────────────────────────
+    // ── Formatting ──────────────────────────────────────────────────────────
 
     let private fmt (amount: float<usd>) =
         let n = float amount
         if n >= 0.0 then sprintf "$%.0f" n
         else sprintf "-$%.0f" (abs n)
 
-    // ── Reusable expense slider field ───────────────────────────────────
+    // ── Expense slider ──────────────────────────────────────────────────────
 
     let private sliderField
-            (lbl   : string)
-            (icon  : string)
-            (minV  : float)
-            (maxV  : float)
-            (stepV : float)
+            (lbl   : string) (icon  : string)
+            (minV  : float)  (maxV  : float) (stepV : float)
             (get   : BudgetProfile -> float<usd>)
             (setF  : float<usd> -> BudgetProfile -> BudgetProfile)
             (state : Var<BudgetProfile>) =
@@ -57,7 +54,7 @@ module Client =
             ] []
         ]
 
-    // ── Income slider (larger, green) ───────────────────────────────────
+    // ── Income slider ───────────────────────────────────────────────────────
 
     let private incomeField (state: Var<BudgetProfile>) =
         let viewVal = state.View |> View.Map (fun p -> float p.MonthlyIncome)
@@ -85,7 +82,7 @@ module Client =
             ] []
         ]
 
-    // ── Tax rate slider ─────────────────────────────────────────────────
+    // ── Tax rate slider ─────────────────────────────────────────────────────
 
     let private taxRateField (state: Var<BudgetProfile>) =
         let viewPct = state.View |> View.Map (fun p -> p.TaxRate * 100.0)
@@ -113,7 +110,7 @@ module Client =
             ] []
         ]
 
-    // ── Tax mode selector ───────────────────────────────────────────────
+    // ── Tax mode ────────────────────────────────────────────────────────────
 
     let private taxModeSelect (state: Var<BudgetProfile>) =
         let modeView = state.View |> View.Map (fun p ->
@@ -151,51 +148,48 @@ module Client =
             ]
         ]
 
-    // ── Savings rate bar ────────────────────────────────────────────────
+    // ── Rainbow savings rate bar ─────────────────────────────────────────────
+    // Track is always the full gradient; a white marker slides to the current %.
+    // Zone labels: DANGER <5% · STABLE >5% · THRIVING >30%
 
     let private savingsBar (state: Var<BudgetProfile>) =
-        let rateView = state.View |> View.Map savingsRate
-        let pctView  = rateView |> View.Map (fun r -> sprintf "%.1f%%" (max 0.0 r))
-        let fillSt   = rateView |> View.Map (fun r -> sprintf "width:%.1f%%" (max 0.0 (min 100.0 r)))
-        let fillCls  = rateView |> View.Map (fun r ->
-            if r >= 30.0 then "nb-savings__fill nb-savings__fill--success"
-            elif r >= 5.0 then "nb-savings__fill nb-savings__fill--warning"
-            else "nb-savings__fill nb-savings__fill--danger"
+        let rateView   = state.View |> View.Map savingsRate
+        let pctText    = rateView |> View.Map (fun r -> sprintf "%.1f%%" (max 0.0 r))
+        let markerLeft = rateView |> View.Map (fun r -> sprintf "left:%.2f%%" (max 0.5 (min 99.5 r)))
+        let pctCls     = rateView |> View.Map (fun r ->
+            if r >= 30.0 then "nb-savings__pct nb-savings__pct--thriving"
+            elif r >= 5.0 then "nb-savings__pct nb-savings__pct--stable"
+            else "nb-savings__pct nb-savings__pct--danger"
         )
         div [attr.``class`` "nb-savings"] [
             div [attr.``class`` "nb-savings__header"] [
                 span [attr.``class`` "nb-savings__label"] [text "Savings Rate"]
-                span [attr.``class`` "nb-savings__pct"] [textView pctView]
+                span [Attr.Dynamic "class" pctCls] [textView pctText]
             ]
             div [attr.``class`` "nb-savings__track"] [
                 div [
-                    Attr.Dynamic "class" fillCls
-                    Attr.Dynamic "style" fillSt
+                    attr.``class`` "nb-savings__marker"
+                    Attr.Dynamic "style" markerLeft
                 ] []
+            ]
+            div [attr.``class`` "nb-savings__zones"] [
+                span [attr.``class`` "nb-savings__zone"] [text "Danger <5%"]
+                span [attr.``class`` "nb-savings__zone"] [text "Stable >5%"]
+                span [attr.``class`` "nb-savings__zone"] [text "Thriving >30%"]
             ]
         ]
 
-    // ── Chart legend item ───────────────────────────────────────────────
-
-    let private legendItem (cat: ExpenseCategory) : Doc =
-        div [attr.``class`` "nb-legend-item"] [
-            div [
-                attr.``class`` "nb-legend-dot"
-                attr.style (sprintf "background:%s" (categoryColor cat))
-            ] []
-            span [] [text (categoryName cat)]
-        ]
-
-    // ── Entry point ─────────────────────────────────────────────────────
+    // ── Entry point ─────────────────────────────────────────────────────────
 
     [<SPAEntryPoint>]
     let Main () =
         let state = Var.Create (Storage.load())
 
-        // Persist + redraw chart on every state change
+        // Persist + redraw both charts on every state change
         state.View |> View.Sink (fun p ->
             Storage.save p
             Charts.update p
+            Charts.updateSparkline p
         )
 
         // Derived views
@@ -209,28 +203,48 @@ module Client =
             else "nb-kpi-hero__value nb-kpi-hero__value--neg"
         )
 
+        // Reactive legend: dot · name · $value for each category
+        let legendDoc =
+            Doc.BindView (fun profile ->
+                div [attr.``class`` "nb-legend"] (
+                    allCategories |> List.map (fun cat ->
+                        div [attr.``class`` "nb-legend-item"] [
+                            div [
+                                attr.``class`` "nb-legend-dot"
+                                attr.style (sprintf "background:%s" (categoryColor cat))
+                            ] []
+                            span [attr.``class`` "nb-legend-name"] [text (categoryName cat)]
+                            span [attr.``class`` "nb-legend-val"]  [text (fmt (categoryValue profile cat))]
+                        ]
+                    )
+                )
+            ) state.View
+
         let ui =
             div [attr.``class`` "nb-shell"] [
                 div [attr.``class`` "nb-grain"] []
                 div [attr.``class`` "nb-container"] [
 
-                    // ── Top bar ──────────────────────────────────────
+                    // ── Top bar ──────────────────────────────────────────
                     div [attr.``class`` "nb-topbar"] [
-                        p [attr.``class`` "nb-brand"] [
+                        // Globe icon + brand name (div avoids p-tag overflow clip)
+                        div [attr.``class`` "nb-brand"] [
+                            i [attr.``class`` "fas fa-earth-americas nb-brand-icon"] []
                             text "Nomadic"
                             strong [] [text "Budget"]
                         ]
-                        span [attr.``class`` "nb-tag"] [
-                            text "Digital Nomad Calculator"
-                        ]
+                        span [attr.``class`` "nb-tag"] [text "Digital Nomad Calculator"]
                     ]
 
-                    // ── Two-column grid ──────────────────────────────
+                    // ── Main grid ────────────────────────────────────────
                     div [attr.``class`` "nb-grid"] [
 
-                        // Left column: Budget Inputs
+                        // ── Left: Budget Inputs ──────────────────────────
                         div [attr.``class`` "nb-card nb-card--accent"] [
-                            div [attr.``class`` "nb-card-title"] [text "Budget Inputs"]
+                            div [attr.``class`` "nb-card-title"] [
+                                i [attr.``class`` "fas fa-sliders"] []
+                                text "Budget Inputs"
+                            ]
 
                             incomeField state
                             hr [attr.``class`` "nb-divider"] []
@@ -254,10 +268,10 @@ module Client =
                             taxModeSelect state
                         ]
 
-                        // Right column: Stats + Chart
+                        // ── Right: Stats + Chart ─────────────────────────
                         div [attr.``class`` "nb-stagger"] [
 
-                            // Net Monthly Savings — hero KPI
+                            // Hero KPI — Net Monthly Savings + sparkline
                             div [attr.``class`` "nb-card"] [
                                 div [attr.``class`` "nb-kpi-hero"] [
                                     div [] [
@@ -268,32 +282,47 @@ module Client =
                                             textView netView
                                         ]
                                     ]
-                                    div [attr.``class`` "nb-kpi-hero__icon"] [
-                                        i [attr.``class`` "fas fa-piggy-bank"] []
-                                    ]
+                                    // Sparkline SVG — rendered by Charts.updateSparkline
+                                    Doc.Element "svg" [
+                                        attr.id "nb-sparkline"
+                                        attr.``class`` "nb-sparkline-svg"
+                                        Attr.Create "viewBox" "0 0 120 44"
+                                        Attr.Create "xmlns"   "http://www.w3.org/2000/svg"
+                                    ] []
                                 ]
                                 savingsBar state
                             ]
 
-                            // Burn Rate + Tax row
+                            // KPI row — Burn Rate + Monthly Tax (each with icon)
                             div [attr.``class`` "nb-kpi-row"] [
                                 div [attr.``class`` "nb-kpi"] [
-                                    p [attr.``class`` "nb-kpi__label"] [text "Monthly Burn"]
-                                    p [attr.``class`` "nb-kpi__value nb-kpi__value--coral"] [
-                                        textView burnView
+                                    div [attr.``class`` "nb-kpi__body"] [
+                                        p [attr.``class`` "nb-kpi__label"] [text "Burn Rate"]
+                                        p [attr.``class`` "nb-kpi__value nb-kpi__value--coral"] [
+                                            textView burnView
+                                        ]
+                                    ]
+                                    div [attr.``class`` "nb-kpi__icon nb-kpi__icon--coral"] [
+                                        i [attr.``class`` "fas fa-fire"] []
                                     ]
                                 ]
                                 div [attr.``class`` "nb-kpi"] [
-                                    p [attr.``class`` "nb-kpi__label"] [text "Tax Estimated"]
-                                    p [attr.``class`` "nb-kpi__value nb-kpi__value--amber"] [
-                                        textView taxView
+                                    div [attr.``class`` "nb-kpi__body"] [
+                                        p [attr.``class`` "nb-kpi__label"] [text "Monthly Tax"]
+                                        p [attr.``class`` "nb-kpi__value nb-kpi__value--amber"] [
+                                            textView taxView
+                                        ]
+                                    ]
+                                    div [attr.``class`` "nb-kpi__icon nb-kpi__icon--amber"] [
+                                        i [attr.``class`` "fas fa-building-columns"] []
                                     ]
                                 ]
                             ]
 
-                            // Expense Breakdown doughnut
+                            // Expense Breakdown — doughnut left, legend right
                             div [attr.``class`` "nb-card"] [
                                 div [attr.``class`` "nb-card-title"] [
+                                    i [attr.``class`` "fas fa-coins"] []
                                     text "Expense Breakdown"
                                 ]
                                 div [attr.``class`` "nb-chart-wrap"] [
@@ -301,11 +330,9 @@ module Client =
                                         attr.id "nb-donut"
                                         attr.``class`` "nb-chart-svg"
                                         Attr.Create "viewBox" "0 0 200 200"
-                                        Attr.Create "xmlns" "http://www.w3.org/2000/svg"
+                                        Attr.Create "xmlns"   "http://www.w3.org/2000/svg"
                                     ] []
-                                    div [attr.``class`` "nb-legend"] (
-                                        allCategories |> List.map legendItem
-                                    )
+                                    legendDoc
                                 ]
                             ]
                         ]
@@ -315,9 +342,10 @@ module Client =
 
         Doc.RunById "main" ui
 
-        // Draw chart after DOM is ready
+        // Both charts need a short delay for the DOM to commit
         async {
             do! Async.Sleep 80
             Charts.update state.Value
+            Charts.updateSparkline state.Value
         }
         |> Async.StartImmediate
