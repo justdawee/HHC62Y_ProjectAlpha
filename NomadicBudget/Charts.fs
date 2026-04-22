@@ -8,13 +8,10 @@ open Domain
 module Charts =
 
     // ── Doughnut ────────────────────────────────────────────────────────────
-    // Stroke-dasharray on <circle> elements. Matches Dashboard.jsx exactly.
-    // size=200, stroke=22, r=(200-22)/2=89, cx=cy=100, circ=2*PI*89
-    // Centre text is rendered as a .nb-chart-center div in Client.fs (reactive).
+    // Takes the SVG element directly — no getElementById needed.
 
     [<Inline """
-    (function(data, colors) {
-        var el = document.getElementById('nb-donut');
+    (function(el, data, colors) {
         if (!el) return;
         while (el.firstChild) { el.removeChild(el.firstChild); }
 
@@ -56,26 +53,19 @@ module Charts =
             el.appendChild(seg);
             acc += frac;
         }
-    })($data, $colors)
+    })($el, $data, $colors)
     """>]
-    let private renderDonut (data: float[]) (colors: string[]) : unit = ()
+    let private renderDonutEl (el: Dom.Element) (data: float[]) (colors: string[]) : unit = ()
 
-    let update (profile: BudgetProfile) : unit =
+    let updateEl (el: Dom.Element) (profile: BudgetProfile) : unit =
         let data   = allCategories |> List.map (fun cat -> float (categoryValue profile cat)) |> Array.ofList
         let colors = allCategories |> List.map categoryColor |> Array.ofList
-        renderDonut data colors
+        renderDonutEl el data colors
 
     // ── Sparkline ───────────────────────────────────────────────────────────
-    // Matches NBSparkline in Dashboard.jsx exactly:
-    //   ratio = net / income  (clamped to -0.6 … 0.8)
-    //   21 points, y = 0.55 - r*0.45*(0.4+0.6*x) + sin(x*6+r*2)*0.05
-    //   Path: M...L...L... (polyline, NOT cubic bezier)
-    //   Fill area: path + " L200,80 L0,80 Z"
-    //   viewBox "0 0 200 80", class "nb-kpi-hero__spark"
 
     [<Inline """
-    (function(ratio) {
-        var el = document.getElementById('nb-sparkline');
+    (function(el, ratio) {
         if (!el) return;
         while (el.firstChild) { el.removeChild(el.firstChild); }
 
@@ -87,7 +77,6 @@ module Charts =
             pts.push([x * 200, y * 80]);
         }
 
-        // Polyline path (M first, then L)
         var path = pts.map(function(p, i) {
             return (i === 0 ? 'M' : 'L') + p[0].toFixed(1) + ',' + p[1].toFixed(1);
         }).join(' ');
@@ -122,12 +111,12 @@ module Charts =
         line.setAttribute('stroke-linecap', 'round');
         line.setAttribute('stroke-linejoin', 'round');
         el.appendChild(line);
-    })($ratio)
+    })($el, $ratio)
     """>]
-    let private renderSparkline (ratio: float) : unit = ()
+    let private renderSparklineEl (el: Dom.Element) (ratio: float) : unit = ()
 
-    let updateSparkline (profile: BudgetProfile) : unit =
+    let updateSparklineEl (el: Dom.Element) (profile: BudgetProfile) : unit =
         let ratio =
             if profile.MonthlyIncome = 0.0<usd> then 0.0
             else float (netSavings profile) / float profile.MonthlyIncome
-        renderSparkline ratio
+        renderSparklineEl el ratio

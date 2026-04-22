@@ -142,14 +142,12 @@ module Client =
         ]
 
     // ── Savings rate bar ────────────────────────────────────────────────────
-    // Matches NBSavingsBar.jsx: nb-card nb-savings, head/track/fill/zones
-    // negative = <5%, stable = 5-30%, thriving (default, cyan) = >=30%
 
     let private savingsBar (state: Var<BudgetProfile>) =
         let rateView    = state.View |> View.Map savingsRate
         let pctText     = rateView |> View.Map (fun r -> sprintf "%.1f%%" r)
         let pctCls      = rateView |> View.Map (fun r ->
-            if r < 5.0   then "nb-savings__pct negative"
+            if r < 5.0    then "nb-savings__pct negative"
             elif r < 30.0 then "nb-savings__pct stable"
             else "nb-savings__pct"
         )
@@ -182,10 +180,8 @@ module Client =
     let Main () =
         let state = Var.Create (Storage.load())
 
-        // Persist on every state change (charts update via Doc.BindView below)
-        state.View |> View.Sink (fun p ->
-            Storage.save p
-        )
+        // Persist on every state change
+        state.View |> View.Sink (fun p -> Storage.save p)
 
         // Derived views
         let netView      = state.View |> View.Map (netSavings >> fmt)
@@ -196,14 +192,13 @@ module Client =
         let totalView    = state.View |> View.Map (fun p ->
             sprintf "$%.0f" (float (totalExpenses p))
         )
-        // positive/negative — matches .nb-kpi-hero__value.positive / .negative in CSS
         let netClassView = state.View |> View.Map (fun p ->
             if float (netSavings p) >= 0.0
             then "nb-kpi-hero__value positive"
             else "nb-kpi-hero__value negative"
         )
 
-        // Reactive legend: matches NBChartCard legend rows
+        // Reactive legend
         let legendDoc =
             Doc.BindView (fun profile ->
                 div [attr.``class`` "nb-chart-legend"] (
@@ -228,7 +223,6 @@ module Client =
                 div [attr.``class`` "nb-container"] [
 
                     // ── Top bar ──────────────────────────────────────────
-                    // Matches NBTopBar.jsx exactly
                     div [attr.``class`` "nb-topbar"] [
                         div [attr.``class`` "nb-brand"] [
                             i [attr.``class`` "fa-solid fa-earth-americas"] []
@@ -284,16 +278,17 @@ module Client =
                                             textView netView
                                         ]
                                     ]
+                                    // Sparkline: OnAfterRender guarantees element is live in the DOM
                                     Doc.Element "svg" [
-                                        attr.id "nb-sparkline"
                                         attr.``class`` "nb-kpi-hero__spark"
                                         Attr.Create "viewBox" "0 0 200 80"
                                         Attr.Create "xmlns"   "http://www.w3.org/2000/svg"
+                                        Attr.OnAfterRender (fun (el: Dom.Element) ->
+                                            state.View |> View.Sink (fun p ->
+                                                Charts.updateSparklineEl el p
+                                            )
+                                        )
                                     ] []
-                                    Doc.BindView (fun p ->
-                                        Charts.updateSparkline p
-                                        Doc.Empty
-                                    ) state.View
                                 ]
                             ]
 
@@ -315,7 +310,7 @@ module Client =
                                 ]
                             ]
 
-                            // NBSavingsBar (inside its own nb-card)
+                            // NBSavingsBar
                             savingsBar state
 
                             // NBChartCard: doughnut + legend
@@ -325,25 +320,25 @@ module Client =
                                     span [attr.``class`` "t"] [text "Expense Breakdown"]
                                 ]
                                 div [attr.``class`` "nb-chart-wrap"] [
-                                    // Canvas: SVG + centre overlay div (matches NBDoughnut.jsx)
                                     div [attr.``class`` "nb-chart-canvas"] [
+                                        // Donut: OnAfterRender fires with a direct element reference
+                                        // after the SVG is live in the DOM — no getElementById needed
                                         Doc.Element "svg" [
-                                            attr.id "nb-donut"
                                             Attr.Create "width"   "200"
                                             Attr.Create "height"  "200"
                                             Attr.Create "viewBox" "0 0 200 200"
                                             Attr.Create "xmlns"   "http://www.w3.org/2000/svg"
+                                            Attr.OnAfterRender (fun (el: Dom.Element) ->
+                                                state.View |> View.Sink (fun p ->
+                                                    Charts.updateEl el p
+                                                )
+                                            )
                                         ] []
                                         // Reactive centre text overlay
                                         div [attr.``class`` "nb-chart-center"] [
                                             div [attr.``class`` "lbl"] [text "Total"]
                                             div [attr.``class`` "val"] [textView totalView]
                                         ]
-                                        // Render donut after SVG is in DOM
-                                        Doc.BindView (fun p ->
-                                            Charts.update p
-                                            Doc.Empty
-                                        ) state.View
                                     ]
                                     legendDoc
                                 ]
