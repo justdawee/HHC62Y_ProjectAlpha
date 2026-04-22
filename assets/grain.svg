@@ -1,10 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300">
-  <filter id="grain" color-interpolation-filters="linearRGB">
-    <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" stitchTiles="stitch" result="noise"/>
-    <feColorMatrix type="saturate" values="0" in="noise" result="gray"/>
-    <feComponentTransfer in="gray" result="boosted">
-      <feFuncA type="linear" slope="0.5"/>
-    </feComponentTransfer>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" width="300" height="300">
+  <filter id="n">
+    <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"></feTurbulence>
+    <feColorMatrix values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.5 0"></feColorMatrix>
   </filter>
-  <rect width="300" height="300" fill="white" filter="url(#grain)" opacity="0.5"/>
+  <rect width="300" height="300" filter="url(#n)" opacity="0.5"></rect>
 </svg>
